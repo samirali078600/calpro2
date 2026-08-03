@@ -28,6 +28,7 @@
         body {
             height: 100vh;
             display: flex;
+            flex-direction: column; /* Added to support layout */
             justify-content: center;
             align-items: center;
             background: linear-gradient(-45deg, #23074d, #cc5333, #23a6d5, #23d5ab);
@@ -56,6 +57,7 @@
             opacity: 0;
             transform: translateY(30px);
             animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            margin-bottom: 20px; /* Space for Ad */
         }
 
         @keyframes fadeIn {
@@ -151,6 +153,20 @@
             box-shadow: 0 0 30px rgba(125, 42, 232, 0.8);
         }
 
+        /* --- AD CONTAINER STYLING --- */
+        .ad-bottom-container {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            width: 320px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         /* --- RESPONSIVE --- */
         @media (max-width: 400px) {
             .calculator {
@@ -165,7 +181,6 @@
             }
         }
 
-        /* Tooltip for keyboard support */
         .keyboard-hint {
             position: absolute;
             bottom: -30px;
@@ -213,10 +228,22 @@
         <div class="keyboard-hint">Keyboard support enabled</div>
     </div>
 
+    <!-- AD CONTAINER START -->
+    <div class="ad-bottom-container">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '39abcec79d669435a2bc9da689b084f3',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/39abcec79d669435a2bc9da689b084f3/invoke.js"></script>
+    </div>
+    <!-- AD CONTAINER END -->
+
     <script>
-        /**
-         * CALCULATOR LOGIC
-         */
         const currentDisplay = document.getElementById('current-operand');
         const previousDisplay = document.getElementById('previous-operand');
         
@@ -225,17 +252,9 @@
         let lastOperator = null;
         let shouldResetScreen = false;
 
-        // Initialize Display
         function updateDisplay() {
-            // Add comma formatting for readability
-            if (currentInput === 'Error') {
-                currentDisplay.innerText = currentInput;
-            } else {
-                currentDisplay.innerText = currentInput;
-            }
+            currentDisplay.innerText = currentInput;
             previousDisplay.innerText = previousInput;
-
-            // Basic auto-scaling font size for long numbers
             if (currentInput.length > 10) {
                 currentDisplay.style.fontSize = '1.5rem';
             } else {
@@ -258,14 +277,11 @@
             if (lastOperator !== null && !shouldResetScreen) {
                 calculate();
             }
-            
-            // Percentage handling
             if (operator === '%') {
                 currentInput = (parseFloat(currentInput) / 100).toString();
                 updateDisplay();
                 return;
             }
-
             previousInput = `${currentInput} ${getOperatorSymbol(operator)}`;
             lastOperator = operator;
             shouldResetScreen = true;
@@ -298,13 +314,10 @@
 
         function calculate() {
             if (lastOperator === null || shouldResetScreen) return;
-            
             let result;
             const prev = parseFloat(previousInput);
             const current = parseFloat(currentInput);
-
             if (isNaN(prev) || isNaN(current)) return;
-
             try {
                 switch (lastOperator) {
                     case '+': result = prev + current; break;
@@ -316,10 +329,7 @@
                         break;
                     default: return;
                 }
-
-                // Handle floating point precision issues (e.g., 0.1 + 0.2)
                 result = Math.round(result * 100000000) / 100000000;
-                
                 currentInput = result.toString();
                 previousInput = '';
                 lastOperator = null;
@@ -334,14 +344,11 @@
             }
         }
 
-        /**
-         * KEYBOARD SUPPORT
-         */
         window.addEventListener('keydown', (e) => {
             if (e.key >= 0 && e.key <= 9) appendNumber(e.key);
             if (e.key === '.') appendNumber('.');
             if (e.key === '=' || e.key === 'Enter') {
-                e.preventDefault(); // Prevent button focus triggering
+                e.preventDefault();
                 calculate();
             }
             if (e.key === 'Backspace') deleteNumber();
@@ -352,7 +359,6 @@
             if (e.key === '%') appendOperator('%');
         });
 
-        // Initialize display on load
         updateDisplay();
     </script>
 </body>
