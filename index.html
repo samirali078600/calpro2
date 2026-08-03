@@ -1,359 +1,2539 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Glass Calculator</title>
-    <style>
-        /* --- CSS VARIABLES --- */
-        :root {
-            --bg-gradient: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --text-color: #ffffff;
-            --accent-color: #7d2ae8;
-            --operator-color: rgba(255, 255, 255, 0.2);
-            --equal-glow: 0 0 20px rgba(125, 42, 232, 0.6);
-            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="CalcPro — Premium all-in-one calculator with scientific, financial, converter, and 25+ tools. Installable PWA, offline ready.">
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>CalcPro — Premium Calculator</title>
+  <link rel="manifest" id="manifest-link">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --bg: #0a0e1a;
+      --bg2: #111827;
+      --card: rgba(255,255,255,0.06);
+      --card-hover: rgba(255,255,255,0.10);
+      --card-border: rgba(255,255,255,0.08);
+      --text: #f0f2f5;
+      --text2: #8b95a8;
+      --text3: #4a5568;
+      --accent: #6c5ce7;
+      --accent2: #00cec9;
+      --accent-grad: linear-gradient(135deg, #6c5ce7, #a855f7, #00cec9);
+      --btn-bg: rgba(255,255,255,0.07);
+      --btn-hover: rgba(255,255,255,0.13);
+      --btn-active: rgba(255,255,255,0.18);
+      --btn-num: rgba(255,255,255,0.09);
+      --btn-op: rgba(108,92,231,0.25);
+      --btn-op-hover: rgba(108,92,231,0.4);
+      --btn-eq: linear-gradient(135deg, #6c5ce7, #a855f7);
+      --btn-danger: rgba(235,87,87,0.2);
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+      --glass-blur: 20px;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+      --font-ui: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --nav-h: 64px;
+      --tab-h: 52px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --ad-height: 60px;
+    }
+    [data-theme="light"] {
+      --bg: #eef1f6;
+      --bg2: #e2e7ef;
+      --card: rgba(255,255,255,0.7);
+      --card-hover: rgba(255,255,255,0.85);
+      --card-border: rgba(0,0,0,0.06);
+      --text: #1a1d26;
+      --text2: #5a6175;
+      --text3: #9ca3b4;
+      --btn-bg: rgba(0,0,0,0.04);
+      --btn-hover: rgba(0,0,0,0.08);
+      --btn-active: rgba(0,0,0,0.12);
+      --btn-num: rgba(0,0,0,0.06);
+      --btn-op: rgba(108,92,231,0.15);
+      --btn-op-hover: rgba(108,92,231,0.25);
+      --btn-danger: rgba(235,87,87,0.1);
+      --shadow: 0 8px 32px rgba(0,0,0,0.08);
+    }
+    /* High contrast mode */
+    [data-contrast="high"] {
+      --card: rgba(255,255,255,0.15);
+      --text: #ffffff;
+      --text2: #c0c8d8;
+      --btn-num: rgba(255,255,255,0.18);
+      --btn-bg: rgba(255,255,255,0.15);
+    }
+    [data-theme="light"][data-contrast="high"] {
+      --card: rgba(0,0,0,0.08);
+      --text: #000000;
+      --text2: #333;
+      --btn-num: rgba(0,0,0,0.12);
+      --btn-bg: rgba(0,0,0,0.1);
+    }
 
-        /* --- GLOBAL STYLES --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: var(--font-main);
-        }
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { font-size:16px; -webkit-tap-highlight-color:transparent; scroll-behavior:smooth; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
+    input, button, select, textarea { font-family:inherit; border:none; outline:none; background:none; color:inherit; }
+    button { cursor:pointer; -webkit-user-select:none; user-select:none; }
+    a { color:inherit; text-decoration:none; }
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--text3); border-radius:4px; }
 
-        body {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(-45deg, #23074d, #cc5333, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            overflow: hidden;
-        }
+    /* ===== ANIMATED BACKGROUND ===== */
+    .bg-canvas {
+      position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+    }
+    .bg-orb {
+      position:absolute; border-radius:50%; filter:blur(80px); opacity:0.35;
+      animation: orbFloat 20s ease-in-out infinite;
+    }
+    .bg-orb:nth-child(1) { width:400px; height:400px; background:#6c5ce7; top:-10%; left:-10%; animation-delay:0s; }
+    .bg-orb:nth-child(2) { width:350px; height:350px; background:#a855f7; bottom:-15%; right:-10%; animation-delay:-7s; }
+    .bg-orb:nth-child(3) { width:300px; height:300px; background:#00cec9; top:50%; left:50%; animation-delay:-14s; }
+    @keyframes orbFloat {
+      0%, 100% { transform:translate(0,0) scale(1); }
+      25% { transform:translate(60px,-40px) scale(1.1); }
+      50% { transform:translate(-30px,60px) scale(0.9); }
+      75% { transform:translate(-60px,-20px) scale(1.05); }
+    }
+    [data-theme="light"] .bg-orb { opacity:0.18; }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    /* ===== APP SHELL ===== */
+    .app-shell {
+      position:relative; z-index:1; display:flex; flex-direction:column;
+      min-height:100dvh; max-width:100%;
+    }
 
-        /* --- CALCULATOR CONTAINER --- */
-        .calculator {
-            position: relative;
-            width: 360px;
-            padding: 25px;
-            border-radius: 30px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
+    /* ===== TOP NAV ===== */
+    .top-nav {
+      height:var(--nav-h); display:flex; align-items:center; justify-content:space-between;
+      padding:0 16px; backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur));
+      background:var(--card); border-bottom:1px solid var(--card-border);
+      position:sticky; top:0; z-index:100;
+    }
+    .nav-brand {
+      display:flex; align-items:center; gap:8px; font-weight:700; font-size:1.25rem;
+      background:var(--accent-grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .nav-brand .material-icons-round { font-size:28px; -webkit-text-fill-color:var(--accent); }
+    .nav-actions { display:flex; gap:4px; }
+    .nav-btn {
+      width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+      transition:all var(--transition); position:relative; overflow:hidden; font-size:22px; color:var(--text2);
+    }
+    .nav-btn:hover { background:var(--btn-hover); color:var(--text); }
 
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      flex:1; padding:12px; padding-bottom:calc(var(--tab-h) + 24px + var(--ad-height));
+      display:flex; justify-content:center; overflow-y:auto;
+    }
+    .calc-panel {
+      width:100%; max-width:440px; display:none; flex-direction:column; gap:12px;
+      animation: panelIn 0.3s ease;
+    }
+    .calc-panel.active { display:flex; }
+    @keyframes panelIn {
+      from { opacity:0; transform:translateY(12px); }
+      to { opacity:1; transform:translateY(0); }
+    }
 
-        /* --- DISPLAY SCREEN --- */
-        .display {
-            width: 100%;
-            margin-bottom: 25px;
-            padding: 20px;
-            text-align: right;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-        }
+    /* ===== GLASS CARD ===== */
+    .glass {
+      background:var(--card); border:1px solid var(--card-border);
+      border-radius:var(--radius); backdrop-filter:blur(var(--glass-blur));
+      -webkit-backdrop-filter:blur(var(--glass-blur)); box-shadow:var(--shadow);
+      transition:background var(--transition), border-color var(--transition);
+    }
 
-        .previous-operand {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1rem;
-            min-height: 1.2rem;
-            margin-bottom: 5px;
-            word-wrap: break-word;
-            word-break: break-all;
-        }
+    /* ===== DISPLAY ===== */
+    .display {
+      padding:20px 20px 16px; min-height:140px; display:flex; flex-direction:column;
+      justify-content:flex-end; position:relative; overflow:hidden;
+    }
+    .display-expr {
+      font-family:var(--font-mono); font-size:0.95rem; color:var(--text2);
+      text-align:right; min-height:1.4em; word-break:break-all; line-height:1.4;
+      transition:color var(--transition);
+    }
+    .display-result {
+      font-family:var(--font-mono); font-size:2.6rem; font-weight:600;
+      text-align:right; color:var(--text); word-break:break-all; line-height:1.2;
+      margin-top:4px; transition:color var(--transition);
+    }
+    .display-result.small { font-size:1.8rem; }
+    .display-result.xsmall { font-size:1.3rem; }
+    .display-memory {
+      position:absolute; top:12px; left:16px; font-size:0.7rem; color:var(--accent);
+      font-weight:600; letter-spacing:0.5px; opacity:0; transition:opacity 0.2s;
+    }
+    .display-memory.show { opacity:1; }
 
-        .current-operand {
-            color: var(--text-color);
-            font-size: 2.5rem;
-            font-weight: 500;
-            word-wrap: break-word;
-            word-break: break-all;
-            transition: all 0.2s ease;
-        }
+    /* ===== CALC BUTTONS ===== */
+    .calc-grid {
+      display:grid; gap:8px; padding:12px;
+    }
+    .calc-grid.basic { grid-template-columns:repeat(4,1fr); }
+    .calc-grid.scientific { grid-template-columns:repeat(5,1fr); }
+    .calc-grid.programmer { grid-template-columns:repeat(5,1fr); }
+    .calc-btn {
+      height:56px; border-radius:var(--radius-sm); font-size:1.1rem; font-weight:500;
+      display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+      transition:all var(--transition); background:var(--btn-num); color:var(--text);
+      font-family:var(--font-mono);
+    }
+    .calc-btn:hover { background:var(--btn-hover); transform:scale(1.03); }
+    .calc-btn:active { transform:scale(0.97); background:var(--btn-active); }
+    .calc-btn.op { background:var(--btn-op); color:#c4b5fd; font-weight:600; }
+    .calc-btn.op:hover { background:var(--btn-op-hover); }
+    .calc-btn.eq { background:var(--btn-eq); color:#fff; font-weight:700; font-size:1.3rem; }
+    .calc-btn.eq:hover { filter:brightness(1.15); transform:scale(1.05); }
+    .calc-btn.danger { background:var(--btn-danger); color:#f87171; }
+    .calc-btn.danger:hover { background:rgba(235,87,87,0.3); }
+    .calc-btn.wide { grid-column:span 2; }
+    .calc-btn.fn { font-size:0.82rem; color:var(--accent2); background:rgba(0,206,201,0.1); }
+    .calc-btn.fn:hover { background:rgba(0,206,201,0.2); }
+    .calc-btn.mem { font-size:0.78rem; color:var(--text2); background:var(--btn-bg); }
+    .calc-btn.active-mode { background:var(--btn-op); color:#c4b5fd; box-shadow:0 0 12px rgba(108,92,231,0.3); }
 
-        /* --- BUTTONS GRID --- */
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
+    /* Ripple effect */
+    .ripple {
+      position:absolute; border-radius:50%; background:rgba(255,255,255,0.25);
+      transform:scale(0); animation:rippleAnim 0.6s ease-out forwards; pointer-events:none;
+    }
+    @keyframes rippleAnim { to { transform:scale(4); opacity:0; } }
 
-        button {
-            height: 65px;
-            border: none;
-            outline: none;
-            border-radius: 16px;
-            background: var(--glass-bg);
-            color: var(--text-color);
-            font-size: 1.3rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid transparent;
-            user-select: none;
-        }
+    /* ===== MODE TOGGLE ROW ===== */
+    .mode-row {
+      display:flex; gap:6px; padding:0 12px; overflow-x:auto; scrollbar-width:none;
+    }
+    .mode-row::-webkit-scrollbar { display:none; }
+    .mode-chip {
+      flex-shrink:0; padding:6px 14px; border-radius:20px; font-size:0.78rem; font-weight:500;
+      background:var(--btn-bg); color:var(--text2); transition:all var(--transition);
+      white-space:nowrap;
+    }
+    .mode-chip:hover { background:var(--btn-hover); color:var(--text); }
+    .mode-chip.active { background:var(--btn-op); color:#c4b5fd; }
 
-        button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-            border: 1px solid var(--glass-border);
-        }
+    /* ===== BOTTOM TAB BAR ===== */
+    .tab-bar {
+      position:fixed; bottom:0; left:0; right:0; height:var(--tab-h);
+      backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur));
+      background:var(--card); border-top:1px solid var(--card-border);
+      display:flex; justify-content:space-around; align-items:center; z-index:100;
+      padding-bottom:env(safe-area-inset-bottom);
+    }
+    .tab-item {
+      display:flex; flex-direction:column; align-items:center; gap:2px;
+      padding:6px 12px; border-radius:12px; transition:all var(--transition);
+      color:var(--text3); font-size:0.65rem; font-weight:500; position:relative;
+    }
+    .tab-item .material-icons-round { font-size:24px; transition:all var(--transition); }
+    .tab-item:hover { color:var(--text2); }
+    .tab-item.active { color:var(--accent); }
+    .tab-item.active .material-icons-round { transform:scale(1.1); }
+    .tab-item.active::after {
+      content:''; position:absolute; top:-1px; left:50%; transform:translateX(-50%);
+      width:20px; height:3px; border-radius:0 0 4px 4px; background:var(--accent-grad);
+    }
 
-        button:active {
-            transform: scale(0.95);
-            background: rgba(255, 255, 255, 0.3);
-        }
+    /* ===== FORM PANELS ===== */
+    .form-panel { padding:16px; display:flex; flex-direction:column; gap:14px; }
+    .form-group { display:flex; flex-direction:column; gap:5px; }
+    .form-label { font-size:0.82rem; font-weight:500; color:var(--text2); }
+    .form-input {
+      padding:12px 14px; border-radius:var(--radius-sm); background:var(--btn-bg);
+      border:1px solid var(--card-border); font-size:1rem; font-family:var(--font-mono);
+      transition:all var(--transition); color:var(--text);
+    }
+    .form-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(108,92,231,0.15); }
+    .form-select {
+      padding:12px 14px; border-radius:var(--radius-sm); background:var(--btn-bg);
+      border:1px solid var(--card-border); font-size:0.95rem; transition:all var(--transition);
+      appearance:none; cursor:pointer; color:var(--text);
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b95a8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 14px center;
+    }
+    .form-select:focus { border-color:var(--accent); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .form-result {
+      padding:16px; border-radius:var(--radius-sm); background:rgba(108,92,231,0.1);
+      border:1px solid rgba(108,92,231,0.2); text-align:center;
+    }
+    .form-result-value { font-family:var(--font-mono); font-size:1.8rem; font-weight:700; color:var(--accent); }
+    .form-result-label { font-size:0.8rem; color:var(--text2); margin-top:4px; }
+    .form-btn {
+      padding:14px; border-radius:var(--radius-sm); font-size:1rem; font-weight:600;
+      background:var(--btn-eq); color:#fff; text-align:center; transition:all var(--transition);
+    }
+    .form-btn:hover { filter:brightness(1.1); transform:translateY(-1px); }
+    .form-btn:active { transform:scale(0.98); }
+    .form-btn.secondary { background:var(--btn-op); color:#c4b5fd; }
 
-        /* --- BUTTON VARIATIONS --- */
-        .operator {
-            background: var(--operator-color);
-            color: #00d2ff;
-        }
+    /* ===== HISTORY PANEL ===== */
+    .history-list { padding:8px; display:flex; flex-direction:column; gap:4px; max-height:60vh; overflow-y:auto; }
+    .history-item {
+      padding:12px 14px; border-radius:var(--radius-sm); background:var(--btn-bg);
+      cursor:pointer; transition:all var(--transition); display:flex; justify-content:space-between; align-items:center;
+    }
+    .history-item:hover { background:var(--btn-hover); }
+    .history-expr { font-family:var(--font-mono); font-size:0.85rem; color:var(--text2); }
+    .history-val { font-family:var(--font-mono); font-size:1rem; font-weight:600; color:var(--text); }
+    .history-empty { text-align:center; padding:40px; color:var(--text3); font-size:0.9rem; }
 
-        .special {
-            color: #ff4b2b;
-        }
+    /* ===== SETTINGS ===== */
+    .settings-section { padding:16px; display:flex; flex-direction:column; gap:16px; }
+    .settings-title { font-size:0.75rem; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:1px; }
+    .settings-item {
+      display:flex; align-items:center; justify-content:space-between; padding:12px 14px;
+      border-radius:var(--radius-sm); background:var(--btn-bg); transition:all var(--transition);
+    }
+    .settings-item:hover { background:var(--btn-hover); }
+    .settings-item-label { font-size:0.92rem; display:flex; align-items:center; gap:10px; }
+    .settings-item-label .material-icons-round { font-size:20px; color:var(--accent); }
 
-        .equals {
-            grid-column: span 2;
-            background: linear-gradient(45deg, #7d2ae8, #00d2ff);
-            box-shadow: var(--equal-glow);
-            font-weight: bold;
-        }
+    /* Toggle switch */
+    .toggle { width:46px; height:26px; border-radius:13px; background:var(--btn-bg); border:1px solid var(--card-border); position:relative; cursor:pointer; transition:all var(--transition); flex-shrink:0; }
+    .toggle.on { background:var(--accent); border-color:var(--accent); }
+    .toggle::after {
+      content:''; position:absolute; width:20px; height:20px; border-radius:50%; background:#fff;
+      top:2px; left:2px; transition:all var(--transition); box-shadow:0 1px 4px rgba(0,0,0,0.2);
+    }
+    .toggle.on::after { left:22px; }
 
-        .equals:hover {
-            box-shadow: 0 0 30px rgba(125, 42, 232, 0.8);
-        }
+    /* Color picker row */
+    .color-row { display:flex; gap:8px; flex-wrap:wrap; }
+    .color-swatch {
+      width:32px; height:32px; border-radius:50%; cursor:pointer; border:2px solid transparent;
+      transition:all var(--transition); position:relative;
+    }
+    .color-swatch:hover { transform:scale(1.15); }
+    .color-swatch.active { border-color:var(--text); box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--text); }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 400px) {
-            .calculator {
-                width: 90%;
-                padding: 20px;
-            }
-            button {
-                height: 55px;
-            }
-            .current-operand {
-                font-size: 2rem;
-            }
-        }
+    /* Slider */
+    .range-slider { width:100%; -webkit-appearance:none; height:4px; border-radius:2px; background:var(--btn-bg); outline:none; }
+    .range-slider::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent); cursor:pointer; }
 
-        /* Tooltip for keyboard support */
-        .keyboard-hint {
-            position: absolute;
-            bottom: -30px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.8rem;
-        }
-    </style>
+    /* ===== MORE GRID ===== */
+    .more-grid { padding:12px; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .more-item {
+      padding:16px 8px; border-radius:var(--radius-sm); background:var(--btn-bg); text-align:center;
+      transition:all var(--transition); cursor:pointer; display:flex; flex-direction:column;
+      align-items:center; gap:8px;
+    }
+    .more-item:hover { background:var(--btn-hover); transform:translateY(-2px); }
+    .more-item .material-icons-round { font-size:28px; color:var(--accent); }
+    .more-item span { font-size:0.75rem; font-weight:500; color:var(--text2); line-height:1.2; }
+
+    /* ===== FLOATING ACTION BUTTON ===== */
+    .fab {
+      position:fixed; bottom:calc(var(--tab-h) + 16px + var(--ad-height)); right:16px; width:54px; height:54px;
+      border-radius:50%; background:var(--btn-eq); color:#fff; display:flex; align-items:center;
+      justify-content:center; box-shadow:0 4px 20px rgba(108,92,231,0.4); z-index:90;
+      transition:all var(--transition); font-size:26px;
+    }
+    .fab:hover { transform:scale(1.1) rotate(90deg); box-shadow:0 6px 28px rgba(108,92,231,0.5); }
+    .fab:active { transform:scale(0.95); }
+
+    /* ===== TOAST ===== */
+    .toast-container { position:fixed; top:76px; right:16px; z-index:999; display:flex; flex-direction:column; gap:8px; }
+    .toast {
+      padding:12px 18px; border-radius:var(--radius-sm); backdrop-filter:blur(20px);
+      background:var(--card); border:1px solid var(--card-border); box-shadow:var(--shadow);
+      font-size:0.85rem; display:flex; align-items:center; gap:8px; min-width:200px;
+      animation:toastIn 0.3s ease;
+    }
+    .toast.leaving { animation:toastOut 0.3s ease forwards; }
+    .toast .material-icons-round { font-size:18px; color:var(--accent); }
+    @keyframes toastIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes toastOut { to { opacity:0; transform:translateX(40px); } }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px);
+      z-index:200; display:none; align-items:center; justify-content:center; padding:16px;
+    }
+    .modal-overlay.show { display:flex; }
+    .modal {
+      width:100%; max-width:420px; max-height:85vh; overflow-y:auto; border-radius:var(--radius);
+      background:var(--bg2); border:1px solid var(--card-border); box-shadow:var(--shadow);
+      animation:modalIn 0.3s ease;
+    }
+    @keyframes modalIn { from { opacity:0; transform:scale(0.92) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    .modal-header { padding:16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); }
+    .modal-header h3 { font-size:1.1rem; font-weight:600; }
+    .modal-body { padding:20px; }
+    .modal-close { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all var(--transition); }
+    .modal-close:hover { background:var(--btn-hover); color:var(--text); }
+
+    /* ===== PROGRAMMER BASE DISPLAY ===== */
+    .base-display { padding:10px 16px; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-family:var(--font-mono); font-size:0.78rem; }
+    .base-label { color:var(--text3); font-weight:600; }
+    .base-value { color:var(--text2); word-break:break-all; }
+
+    /* ===== SEARCH BAR ===== */
+    .search-bar {
+      margin:0 12px 8px; padding:10px 14px; border-radius:var(--radius-sm);
+      background:var(--btn-bg); border:1px solid var(--card-border);
+      display:flex; align-items:center; gap:8px; transition:all var(--transition);
+    }
+    .search-bar:focus-within { border-color:var(--accent); }
+    .search-bar input { flex:1; font-size:0.9rem; background:none; color:var(--text); }
+    .search-bar .material-icons-round { font-size:20px; color:var(--text3); }
+
+    /* ===== NOTES ===== */
+    .notes-area {
+      width:100%; min-height:200px; padding:14px; border-radius:var(--radius-sm);
+      background:var(--btn-bg); border:1px solid var(--card-border); font-size:0.95rem;
+      line-height:1.6; resize:vertical; color:var(--text); transition:all var(--transition);
+      font-family:var(--font-ui);
+    }
+    .notes-area:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(108,92,231,0.15); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (min-width:768px) {
+      .main-content { padding:20px; padding-bottom:calc(var(--tab-h) + 32px + var(--ad-height)); }
+      .calc-panel { max-width:520px; }
+      .display-result { font-size:3rem; }
+      .calc-btn { height:60px; }
+      .more-grid { grid-template-columns:repeat(4,1fr); }
+    }
+    @media (min-width:1024px) {
+      .calc-panel { max-width:560px; }
+    }
+    @media (max-width:380px) {
+      .calc-btn { height:48px; font-size:0.95rem; }
+      .display-result { font-size:2rem; }
+      .more-grid { grid-template-columns:repeat(2,1fr); }
+    }
+
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion:reduce) {
+      *, *::before, *::after { animation-duration:0.01ms!important; transition-duration:0.01ms!important; }
+      .bg-orb { animation:none; }
+    }
+
+    /* ===== PRINT ===== */
+    @media print {
+      .top-nav, .tab-bar, .fab, .bg-canvas, .ad-container { display:none!important; }
+      .main-content { padding:0; }
+      .display { box-shadow:none; border:1px solid #ccc; }
+    }
+
+    /* Voice indicator */
+    .voice-indicator {
+      display:none; align-items:center; gap:8px; padding:8px 14px; margin:0 12px;
+      border-radius:var(--radius-sm); background:rgba(235,87,87,0.15); border:1px solid rgba(235,87,87,0.3);
+      font-size:0.85rem; color:#f87171;
+    }
+    .voice-indicator.active { display:flex; }
+    .voice-dot { width:8px; height:8px; border-radius:50%; background:#f87171; animation:pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    /* Splash screen */
+    .splash {
+      position:fixed; inset:0; z-index:9999; background:var(--bg);
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+      transition:opacity 0.5s ease;
+    }
+    .splash.hide { opacity:0; pointer-events:none; }
+    .splash-icon { font-size:64px; color:var(--accent); animation:splashPulse 1.5s ease-in-out infinite; }
+    @keyframes splashPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.1);} }
+    .splash-text { font-size:1.5rem; font-weight:700; background:var(--accent-grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .splash-bar { width:120px; height:3px; border-radius:2px; background:var(--btn-bg); overflow:hidden; }
+    .splash-bar-fill { height:100%; width:0; background:var(--accent-grad); border-radius:2px; animation:splashLoad 1.2s ease forwards; }
+    @keyframes splashLoad { to { width:100%; } }
+
+    /* ===== AD CONTAINER ===== */
+    .ad-container {
+      position:fixed;
+      bottom:var(--tab-h);
+      left:0;
+      right:0;
+      height:var(--ad-height);
+      background:var(--bg2);
+      border-top:1px solid var(--card-border);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:99;
+      overflow:hidden;
+      backdrop-filter:blur(4px);
+      -webkit-backdrop-filter:blur(4px);
+    }
+    .ad-container iframe {
+      max-width:100%;
+      max-height:100%;
+      border:none;
+    }
+    .ad-fallback {
+      font-size:0.7rem;
+      color:var(--text3);
+      text-align:center;
+      padding:4px;
+      background:var(--card);
+      border-radius:var(--radius-xs);
+      width:100%;
+      max-width:320px;
+    }
+    @media (max-width: 480px) {
+      .ad-container { height:50px; }
+      :root { --ad-height:50px; }
+    }
+  </style>
 </head>
 <body>
+<!-- Splash Screen -->
+<div class="splash" id="splash">
+  <span class="material-icons-round splash-icon">calculate</span>
+  <div class="splash-text">CalcPro</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
 
-    <div class="calculator">
-        <div class="display">
-            <div id="previous-operand" class="previous-operand"></div>
-            <div id="current-operand" class="current-operand">0</div>
-        </div>
-        
-        <div class="buttons">
-            <button onclick="clearDisplay()" class="special">AC</button>
-            <button onclick="deleteNumber()" class="special">⌫</button>
-            <button onclick="appendOperator('%')" class="operator">%</button>
-            <button onclick="appendOperator('/')" class="operator">÷</button>
-            
-            <button onclick="appendNumber('7')">7</button>
-            <button onclick="appendNumber('8')">8</button>
-            <button onclick="appendNumber('9')">9</button>
-            <button onclick="appendOperator('*')" class="operator">×</button>
-            
-            <button onclick="appendNumber('4')">4</button>
-            <button onclick="appendNumber('5')">5</button>
-            <button onclick="appendNumber('6')">6</button>
-            <button onclick="appendOperator('-')" class="operator">−</button>
-            
-            <button onclick="appendNumber('1')">1</button>
-            <button onclick="appendNumber('2')">2</button>
-            <button onclick="appendNumber('3')">3</button>
-            <button onclick="appendOperator('+')" class="operator">+</button>
-            
-            <button onclick="appendNumber('0')">0</button>
-            <button onclick="appendNumber('.')">.</button>
-            <button onclick="calculate()" class="equals">=</button>
-        </div>
-        <div class="keyboard-hint">Keyboard support enabled</div>
+<!-- Animated Background -->
+<div class="bg-canvas" aria-hidden="true">
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+</div>
+
+<!-- App Shell -->
+<div class="app-shell">
+  <!-- Top Navigation -->
+  <header class="top-nav" role="banner">
+    <div class="nav-brand">
+      <span class="material-icons-round">calculate</span>
+      CalcPro
     </div>
+    <nav class="nav-actions" aria-label="Quick actions">
+      <button class="nav-btn" id="btn-voice" title="Voice Input" aria-label="Voice input">
+        <span class="material-icons-round">mic</span>
+      </button>
+      <button class="nav-btn" id="btn-fullscreen" title="Full Screen" aria-label="Toggle full screen">
+        <span class="material-icons-round">fullscreen</span>
+      </button>
+      <button class="nav-btn" id="btn-history" title="History" aria-label="Calculator history">
+        <span class="material-icons-round">history</span>
+      </button>
+    </nav>
+  </header>
 
-    <script>
-        /**
-         * CALCULATOR LOGIC
-         */
-        const currentDisplay = document.getElementById('current-operand');
-        const previousDisplay = document.getElementById('previous-operand');
-        
-        let currentInput = '0';
-        let previousInput = '';
-        let lastOperator = null;
-        let shouldResetScreen = false;
+  <!-- Voice Indicator -->
+  <div class="voice-indicator" id="voiceIndicator">
+    <div class="voice-dot"></div>
+    Listening...
+  </div>
 
-        // Initialize Display
-        function updateDisplay() {
-            // Add comma formatting for readability
-            if (currentInput === 'Error') {
-                currentDisplay.innerText = currentInput;
-            } else {
-                currentDisplay.innerText = currentInput;
+  <!-- Main Content Area -->
+  <main class="main-content" role="main">
+    <!-- ===== BASIC CALCULATOR ===== -->
+    <section class="calc-panel active" id="panel-basic" aria-label="Basic Calculator">
+      <div class="display glass">
+        <div class="display-memory" id="memIndicator">M</div>
+        <div class="display-expr" id="basicExpr" aria-live="polite"></div>
+        <div class="display-result" id="basicResult" aria-live="assertive">0</div>
+      </div>
+      <div class="mode-row" role="tablist">
+        <button class="mode-chip active" data-mode="basic" role="tab">Basic</button>
+        <button class="mode-chip" data-mode="scientific" role="tab">Scientific</button>
+        <button class="mode-chip" data-mode="programmer" role="tab">Programmer</button>
+      </div>
+      <div class="calc-grid basic" id="basicGrid">
+        <button class="calc-btn danger" data-action="clear">AC</button>
+        <button class="calc-btn danger" data-action="backspace"><span class="material-icons-round" style="font-size:20px">backspace</span></button>
+        <button class="calc-btn op" data-action="percent">%</button>
+        <button class="calc-btn op" data-action="op" data-val="/">÷</button>
+        <button class="calc-btn" data-action="num" data-val="7">7</button>
+        <button class="calc-btn" data-action="num" data-val="8">8</button>
+        <button class="calc-btn" data-action="num" data-val="9">9</button>
+        <button class="calc-btn op" data-action="op" data-val="*">×</button>
+        <button class="calc-btn" data-action="num" data-val="4">4</button>
+        <button class="calc-btn" data-action="num" data-val="5">5</button>
+        <button class="calc-btn" data-action="num" data-val="6">6</button>
+        <button class="calc-btn op" data-action="op" data-val="-">−</button>
+        <button class="calc-btn" data-action="num" data-val="1">1</button>
+        <button class="calc-btn" data-action="num" data-val="2">2</button>
+        <button class="calc-btn" data-action="num" data-val="3">3</button>
+        <button class="calc-btn op" data-action="op" data-val="+">+</button>
+        <button class="calc-btn mem" data-action="mrc">MRC</button>
+        <button class="calc-btn" data-action="num" data-val="0">0</button>
+        <button class="calc-btn" data-action="decimal">.</button>
+        <button class="calc-btn eq" data-action="equals">=</button>
+      </div>
+    </section>
+
+    <!-- ===== SCIENTIFIC CALCULATOR ===== -->
+    <section class="calc-panel" id="panel-scientific" aria-label="Scientific Calculator">
+      <div class="display glass">
+        <div class="display-memory" id="memIndicatorSci">M</div>
+        <div class="display-expr" id="sciExpr" aria-live="polite"></div>
+        <div class="display-result" id="sciResult" aria-live="assertive">0</div>
+      </div>
+      <div class="mode-row" role="tablist">
+        <button class="mode-chip" data-mode="basic" role="tab">Basic</button>
+        <button class="mode-chip active" data-mode="scientific" role="tab">Scientific</button>
+        <button class="mode-chip" data-mode="programmer" role="tab">Programmer</button>
+      </div>
+      <div class="mode-row">
+        <button class="mode-chip active" data-sci="deg" id="sciDeg">DEG</button>
+        <button class="mode-chip" data-sci="rad" id="sciRad">RAD</button>
+      </div>
+      <div class="calc-grid scientific" id="sciGrid">
+        <button class="calc-btn fn" data-sci-fn="sin">sin</button>
+        <button class="calc-btn fn" data-sci-fn="cos">cos</button>
+        <button class="calc-btn fn" data-sci-fn="tan">tan</button>
+        <button class="calc-btn fn" data-sci-fn="cot">cot</button>
+        <button class="calc-btn fn" data-sci-fn="sec">sec</button>
+        <button class="calc-btn fn" data-sci-fn="csc">csc</button>
+        <button class="calc-btn fn" data-sci-fn="log">log</button>
+        <button class="calc-btn fn" data-sci-fn="ln">ln</button>
+        <button class="calc-btn fn" data-sci-fn="sqrt">√</button>
+        <button class="calc-btn fn" data-sci-fn="cbrt">∛</button>
+        <button class="calc-btn fn" data-sci-fn="square">x²</button>
+        <button class="calc-btn fn" data-sci-fn="cube">x³</button>
+        <button class="calc-btn fn" data-sci-fn="fact">n!</button>
+        <button class="calc-btn fn" data-sci-fn="exp">eˣ</button>
+        <button class="calc-btn fn" data-sci-fn="power">xʸ</button>
+        <button class="calc-btn fn" data-sci-fn="inv">1/x</button>
+        <button class="calc-btn fn" data-sci-fn="abs">|x|</button>
+        <button class="calc-btn fn" data-sci-fn="pi">π</button>
+        <button class="calc-btn fn" data-sci-fn="e">e</button>
+        <button class="calc-btn fn" data-sci-fn="mod">mod</button>
+        <button class="calc-btn danger" data-action="clear">AC</button>
+        <button class="calc-btn danger" data-action="backspace"><span class="material-icons-round" style="font-size:18px">backspace</span></button>
+        <button class="calc-btn op" data-action="op" data-val="(">(</button>
+        <button class="calc-btn op" data-action="op" data-val=")">)</button>
+        <button class="calc-btn op" data-action="op" data-val="/">÷</button>
+        <button class="calc-btn" data-action="num" data-val="7">7</button>
+        <button class="calc-btn" data-action="num" data-val="8">8</button>
+        <button class="calc-btn" data-action="num" data-val="9">9</button>
+        <button class="calc-btn op" data-action="op" data-val="*">×</button>
+        <button class="calc-btn op" data-action="percent">%</button>
+        <button class="calc-btn" data-action="num" data-val="4">4</button>
+        <button class="calc-btn" data-action="num" data-val="5">5</button>
+        <button class="calc-btn" data-action="num" data-val="6">6</button>
+        <button class="calc-btn op" data-action="op" data-val="-">−</button>
+        <button class="calc-btn mem" data-action="mplus">M+</button>
+        <button class="calc-btn" data-action="num" data-val="1">1</button>
+        <button class="calc-btn" data-action="num" data-val="2">2</button>
+        <button class="calc-btn" data-action="num" data-val="3">3</button>
+        <button class="calc-btn op" data-action="op" data-val="+">+</button>
+        <button class="calc-btn mem" data-action="mminus">M−</button>
+        <button class="calc-btn mem" data-action="mrc">MRC</button>
+        <button class="calc-btn" data-action="num" data-val="0">0</button>
+        <button class="calc-btn" data-action="decimal">.</button>
+        <button class="calc-btn fn" data-sci-fn="negate">±</button>
+        <button class="calc-btn eq" data-action="equals">=</button>
+      </div>
+    </section>
+
+    <!-- ===== PROGRAMMER CALCULATOR ===== -->
+    <section class="calc-panel" id="panel-programmer" aria-label="Programmer Calculator">
+      <div class="display glass">
+        <div class="display-expr" id="progExpr" aria-live="polite"></div>
+        <div class="display-result" id="progResult" aria-live="assertive">0</div>
+      </div>
+      <div class="mode-row" role="tablist">
+        <button class="mode-chip" data-mode="basic" role="tab">Basic</button>
+        <button class="mode-chip" data-mode="scientific" role="tab">Scientific</button>
+        <button class="mode-chip active" data-mode="programmer" role="tab">Programmer</button>
+      </div>
+      <div class="mode-row">
+        <button class="mode-chip active" data-prog-base="dec">DEC</button>
+        <button class="mode-chip" data-prog-base="hex">HEX</button>
+        <button class="mode-chip" data-prog-base="oct">OCT</button>
+        <button class="mode-chip" data-prog-base="bin">BIN</button>
+      </div>
+      <div class="glass" style="margin:0 12px;padding:4px 0;">
+        <div class="base-display" id="baseDisplay">
+          <span class="base-label">HEX</span><span class="base-value" id="baseHex">0</span>
+          <span class="base-label">DEC</span><span class="base-value" id="baseDec">0</span>
+          <span class="base-label">OCT</span><span class="base-value" id="baseOct">0</span>
+          <span class="base-label">BIN</span><span class="base-value" id="baseBin">0</span>
+        </div>
+      </div>
+      <div class="calc-grid programmer" id="progGrid">
+        <button class="calc-btn" data-action="num" data-val="A">A</button>
+        <button class="calc-btn" data-action="num" data-val="B">B</button>
+        <button class="calc-btn" data-action="num" data-val="C">C</button>
+        <button class="calc-btn" data-action="num" data-val="D">D</button>
+        <button class="calc-btn" data-action="num" data-val="E">E</button>
+        <button class="calc-btn" data-action="num" data-val="F">F</button>
+        <button class="calc-btn fn" data-prog-fn="and">AND</button>
+        <button class="calc-btn fn" data-prog-fn="or">OR</button>
+        <button class="calc-btn fn" data-prog-fn="xor">XOR</button>
+        <button class="calc-btn fn" data-prog-fn="not">NOT</button>
+        <button class="calc-btn" data-action="num" data-val="7">7</button>
+        <button class="calc-btn" data-action="num" data-val="8">8</button>
+        <button class="calc-btn" data-action="num" data-val="9">9</button>
+        <button class="calc-btn fn" data-prog-fn="lsh">&lt;&lt;</button>
+        <button class="calc-btn fn" data-prog-fn="rsh">&gt;&gt;</button>
+        <button class="calc-btn" data-action="num" data-val="4">4</button>
+        <button class="calc-btn" data-action="num" data-val="5">5</button>
+        <button class="calc-btn" data-action="num" data-val="6">6</button>
+        <button class="calc-btn op" data-action="op" data-val="/">÷</button>
+        <button class="calc-btn op" data-action="op" data-val="*">×</button>
+        <button class="calc-btn" data-action="num" data-val="1">1</button>
+        <button class="calc-btn" data-action="num" data-val="2">2</button>
+        <button class="calc-btn" data-action="num" data-val="3">3</button>
+        <button class="calc-btn op" data-action="op" data-val="-">−</button>
+        <button class="calc-btn op" data-action="op" data-val="+">+</button>
+        <button class="calc-btn danger" data-action="clear">AC</button>
+        <button class="calc-btn danger" data-action="backspace"><span class="material-icons-round" style="font-size:18px">backspace</span></button>
+        <button class="calc-btn" data-action="num" data-val="0">0</button>
+        <button class="calc-btn fn" data-prog-fn="negate">±</button>
+        <button class="calc-btn eq" data-action="equals">=</button>
+      </div>
+    </section>
+
+    <!-- ===== UNIT CONVERTER ===== -->
+    <section class="calc-panel" id="panel-converter" aria-label="Unit Converter">
+      <div class="search-bar">
+        <span class="material-icons-round">search</span>
+        <input type="text" id="converterSearch" placeholder="Search units..." aria-label="Search units">
+      </div>
+      <div class="mode-row" id="converterModes">
+        <button class="mode-chip active" data-conv="length">Length</button>
+        <button class="mode-chip" data-conv="weight">Weight</button>
+        <button class="mode-chip" data-conv="area">Area</button>
+        <button class="mode-chip" data-conv="volume">Volume</button>
+        <button class="mode-chip" data-conv="temperature">Temp</button>
+        <button class="mode-chip" data-conv="speed">Speed</button>
+        <button class="mode-chip" data-conv="time">Time</button>
+        <button class="mode-chip" data-conv="pressure">Pressure</button>
+        <button class="mode-chip" data-conv="energy">Energy</button>
+        <button class="mode-chip" data-conv="data">Data</button>
+        <button class="mode-chip" data-conv="angle">Angle</button>
+        <button class="mode-chip" data-conv="power">Power</button>
+        <button class="mode-chip" data-conv="frequency">Freq</button>
+      </div>
+      <div class="glass form-panel" id="converterForm">
+        <div class="form-group">
+          <label class="form-label">Value</label>
+          <input type="number" class="form-input" id="convValue" value="1" aria-label="Value to convert">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">From</label>
+            <select class="form-select" id="convFrom" aria-label="Convert from"></select>
+          </div>
+          <div class="form-group" style="justify-content:flex-end">
+            <button class="nav-btn" id="convSwap" title="Swap" aria-label="Swap units" style="margin-top:4px">
+              <span class="material-icons-round">swap_horiz</span>
+            </button>
+          </div>
+          <div class="form-group">
+            <label class="form-label">To</label>
+            <select class="form-select" id="convTo" aria-label="Convert to"></select>
+          </div>
+        </div>
+        <div class="form-result">
+          <div class="form-result-value" id="convResult">—</div>
+          <div class="form-result-label">Converted Value</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FINANCIAL CALCULATOR ===== -->
+    <section class="calc-panel" id="panel-financial" aria-label="Financial Calculator">
+      <div class="mode-row" id="finModes">
+        <button class="mode-chip active" data-fin="emi">EMI</button>
+        <button class="mode-chip" data-fin="sip">SIP</button>
+        <button class="mode-chip" data-fin="loan">Loan</button>
+        <button class="mode-chip" data-fin="gst">GST</button>
+        <button class="mode-chip" data-fin="discount">Discount</button>
+        <button class="mode-chip" data-fin="profit">P&L</button>
+        <button class="mode-chip" data-fin="tax">Tax</button>
+        <button class="mode-chip" data-fin="tip">Tip</button>
+        <button class="mode-chip" data-fin="split">Split</button>
+        <button class="mode-chip" data-fin="currency">Currency</button>
+        <button class="mode-chip" data-fin="fuel">Fuel</button>
+        <button class="mode-chip" data-fin="electricity">Electricity</button>
+      </div>
+
+      <!-- EMI -->
+      <div class="glass form-panel fin-form" id="fin-emi">
+        <div class="form-group"><label class="form-label">Loan Amount ($)</label><input type="number" class="form-input" id="emiAmount" value="100000"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Interest Rate (%/yr)</label><input type="number" class="form-input" id="emiRate" value="8.5" step="0.1"></div>
+          <div class="form-group"><label class="form-label">Tenure (months)</label><input type="number" class="form-input" id="emiTenure" value="120"></div>
+        </div>
+        <button class="form-btn" onclick="calcEMI()">Calculate EMI</button>
+        <div class="form-result"><div class="form-result-value" id="emiResult">—</div><div class="form-result-label">Monthly EMI</div></div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-result" style="background:rgba(0,206,201,0.1);border-color:rgba(0,206,201,0.2)"><div class="form-result-value" id="emiTotal" style="font-size:1.1rem;color:var(--accent2)">—</div><div class="form-result-label">Total Payment</div></div>
+          <div class="form-result" style="background:rgba(235,87,87,0.1);border-color:rgba(235,87,87,0.2)"><div class="form-result-value" id="emiInterest" style="font-size:1.1rem;color:#f87171">—</div><div class="form-result-label">Total Interest</div></div>
+        </div>
+      </div>
+
+      <!-- SIP -->
+      <div class="glass form-panel fin-form" id="fin-sip" style="display:none">
+        <div class="form-group"><label class="form-label">Monthly Investment ($)</label><input type="number" class="form-input" id="sipAmount" value="5000"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Expected Return (%/yr)</label><input type="number" class="form-input" id="sipRate" value="12" step="0.1"></div>
+          <div class="form-group"><label class="form-label">Duration (years)</label><input type="number" class="form-input" id="sipYears" value="10"></div>
+        </div>
+        <button class="form-btn" onclick="calcSIP()">Calculate SIP</button>
+        <div class="form-result"><div class="form-result-value" id="sipResult">—</div><div class="form-result-label">Future Value</div></div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-result" style="background:rgba(0,206,201,0.1);border-color:rgba(0,206,201,0.2)"><div class="form-result-value" id="sipInvested" style="font-size:1.1rem;color:var(--accent2)">—</div><div class="form-result-label">Amount Invested</div></div>
+          <div class="form-result" style="background:rgba(108,92,231,0.1);border-color:rgba(108,92,231,0.2)"><div class="form-result-value" id="sipReturns" style="font-size:1.1rem;color:var(--accent)">—</div><div class="form-result-label">Wealth Gained</div></div>
+        </div>
+      </div>
+
+      <!-- Loan -->
+      <div class="glass form-panel fin-form" id="fin-loan" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Monthly Payment ($)</label><input type="number" class="form-input" id="loanMonthly" value="1000"></div>
+          <div class="form-group"><label class="form-label">Interest Rate (%/yr)</label><input type="number" class="form-input" id="loanRate" value="8" step="0.1"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Tenure (months)</label><input type="number" class="form-input" id="loanTenure" value="60"></div>
+        <button class="form-btn" onclick="calcLoan()">Calculate Loan</button>
+        <div class="form-result"><div class="form-result-value" id="loanResult">—</div><div class="form-result-label">Maximum Loan Amount</div></div>
+      </div>
+
+      <!-- GST -->
+      <div class="glass form-panel fin-form" id="fin-gst" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" class="form-input" id="gstAmount" value="1000"></div>
+          <div class="form-group"><label class="form-label">GST Rate (%)</label><input type="number" class="form-input" id="gstRate" value="18"></div>
+        </div>
+        <div class="form-row">
+          <button class="form-btn secondary" onclick="calcGST('add')">Add GST</button>
+          <button class="form-btn" onclick="calcGST('remove')">Remove GST</button>
+        </div>
+        <div class="form-result"><div class="form-result-value" id="gstResult">—</div><div class="form-result-label" id="gstLabel">Result</div></div>
+        <div class="form-result" style="margin-top:8px;background:rgba(0,206,201,0.1);border-color:rgba(0,206,201,0.2)"><div class="form-result-value" id="gstTax" style="font-size:1.1rem;color:var(--accent2)">—</div><div class="form-result-label">GST Amount</div></div>
+      </div>
+
+      <!-- Discount -->
+      <div class="glass form-panel fin-form" id="fin-discount" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Original Price ($)</label><input type="number" class="form-input" id="discPrice" value="500"></div>
+          <div class="form-group"><label class="form-label">Discount (%)</label><input type="number" class="form-input" id="discPercent" value="20"></div>
+        </div>
+        <button class="form-btn" onclick="calcDiscount()">Calculate</button>
+        <div class="form-result"><div class="form-result-value" id="discResult">—</div><div class="form-result-label">Final Price</div></div>
+        <div class="form-result" style="margin-top:8px;background:rgba(0,206,201,0.1);border-color:rgba(0,206,201,0.2)"><div class="form-result-value" id="discSaved" style="font-size:1.1rem;color:var(--accent2)">—</div><div class="form-result-label">You Save</div></div>
+      </div>
+
+      <!-- Profit & Loss -->
+      <div class="glass form-panel fin-form" id="fin-profit" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Cost Price ($)</label><input type="number" class="form-input" id="plCost" value="100"></div>
+          <div class="form-group"><label class="form-label">Selling Price ($)</label><input type="number" class="form-input" id="plSell" value="130"></div>
+        </div>
+        <button class="form-btn" onclick="calcPL()">Calculate</button>
+        <div class="form-result"><div class="form-result-value" id="plResult">—</div><div class="form-result-label" id="plLabel">Profit/Loss</div></div>
+        <div class="form-result" style="margin-top:8px"><div class="form-result-value" id="plPercent" style="font-size:1.1rem">—</div><div class="form-result-label">Percentage</div></div>
+      </div>
+
+      <!-- Tax -->
+      <div class="glass form-panel fin-form" id="fin-tax" style="display:none">
+        <div class="form-group"><label class="form-label">Income ($)</label><input type="number" class="form-input" id="taxIncome" value="75000"></div>
+        <div class="form-group"><label class="form-label">Tax Rate (%)</label><input type="number" class="form-input" id="taxRate" value="22" step="0.1"></div>
+        <button class="form-btn" onclick="calcTax()">Calculate Tax</button>
+        <div class="form-result"><div class="form-result-value" id="taxResult">—</div><div class="form-result-label">Tax Amount</div></div>
+        <div class="form-result" style="margin-top:8px;background:rgba(0,206,201,0.1);border-color:rgba(0,206,201,0.2)"><div class="form-result-value" id="taxAfter" style="font-size:1.1rem;color:var(--accent2)">—</div><div class="form-result-label">After-Tax Income</div></div>
+      </div>
+
+      <!-- Tip -->
+      <div class="glass form-panel fin-form" id="fin-tip" style="display:none">
+        <div class="form-group"><label class="form-label">Bill Amount ($)</label><input type="number" class="form-input" id="tipBill" value="85"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Tip Percentage (%)</label><input type="number" class="form-input" id="tipPercent" value="15"></div>
+          <div class="form-group"><label class="form-label">People</label><input type="number" class="form-input" id="tipPeople" value="1" min="1"></div>
+        </div>
+        <button class="form-btn" onclick="calcTip()">Calculate Tip</button>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-result"><div class="form-result-value" id="tipAmount" style="font-size:1.1rem">—</div><div class="form-result-label">Tip</div></div>
+          <div class="form-result" style="background:rgba(108,92,231,0.1);border-color:rgba(108,92,231,0.2)"><div class="form-result-value" id="tipTotal" style="font-size:1.1rem;color:var(--accent)">—</div><div class="form-result-label">Total</div></div>
+        </div>
+        <div class="form-result" style="margin-top:8px;background:rgba(0,206,201,0.1);border-color:rgba(0,206,201,0.2)"><div class="form-result-value" id="tipPerPerson" style="font-size:1.1rem;color:var(--accent2)">—</div><div class="form-result-label">Per Person</div></div>
+      </div>
+
+      <!-- Split Bill -->
+      <div class="glass form-panel fin-form" id="fin-split" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Total Bill ($)</label><input type="number" class="form-input" id="splitBill" value="150"></div>
+          <div class="form-group"><label class="form-label">Number of People</label><input type="number" class="form-input" id="splitPeople" value="3" min="2"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Tip (%)</label><input type="number" class="form-input" id="splitTip" value="10"></div>
+        <button class="form-btn" onclick="calcSplit()">Split Bill</button>
+        <div class="form-result"><div class="form-result-value" id="splitResult">—</div><div class="form-result-label">Each Person Pays</div></div>
+      </div>
+
+      <!-- Currency -->
+      <div class="glass form-panel fin-form" id="fin-currency" style="display:none">
+        <div class="form-group"><label class="form-label">Amount</label><input type="number" class="form-input" id="currAmount" value="100"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">From</label><select class="form-select" id="currFrom" aria-label="From currency"></select></div>
+          <div class="form-group" style="justify-content:flex-end"><button class="nav-btn" onclick="swapCurrency()" style="margin-top:4px"><span class="material-icons-round">swap_horiz</span></button></div>
+          <div class="form-group"><label class="form-label">To</label><select class="form-select" id="currTo" aria-label="To currency"></select></div>
+        </div>
+        <button class="form-btn" onclick="calcCurrency()">Convert</button>
+        <div class="form-result"><div class="form-result-value" id="currResult">—</div><div class="form-result-label" id="currLabel">Converted Amount</div></div>
+        <div style="font-size:0.72rem;color:var(--text3);text-align:center;margin-top:6px">Rates are approximate offline fallbacks</div>
+      </div>
+
+      <!-- Fuel -->
+      <div class="glass form-panel fin-form" id="fin-fuel" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Distance (km)</label><input type="number" class="form-input" id="fuelDist" value="500"></div>
+          <div class="form-group"><label class="form-label">Fuel Efficiency (km/L)</label><input type="number" class="form-input" id="fuelEff" value="15" step="0.1"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Fuel Price ($/L)</label><input type="number" class="form-input" id="fuelPrice" value="1.5" step="0.01"></div>
+        <button class="form-btn" onclick="calcFuel()">Calculate Fuel Cost</button>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-result"><div class="form-result-value" id="fuelCost" style="font-size:1.1rem">—</div><div class="form-result-label">Total Cost</div></div>
+          <div class="form-result" style="background:rgba(0,206,201,0.1);border-color:rgba(0,206,201,0.2)"><div class="form-result-value" id="fuelLiters" style="font-size:1.1rem;color:var(--accent2)">—</div><div class="form-result-label">Liters Needed</div></div>
+        </div>
+      </div>
+
+      <!-- Electricity -->
+      <div class="glass form-panel fin-form" id="fin-electricity" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Units Consumed (kWh)</label><input type="number" class="form-input" id="elecUnits" value="350"></div>
+          <div class="form-group"><label class="form-label">Rate per kWh ($)</label><input type="number" class="form-input" id="elecRate" value="0.12" step="0.01"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Fixed Charges ($)</label><input type="number" class="form-input" id="elecFixed" value="25"></div>
+        <button class="form-btn" onclick="calcElectricity()">Calculate Bill</button>
+        <div class="form-result"><div class="form-result-value" id="elecResult">—</div><div class="form-result-label">Total Bill</div></div>
+      </div>
+    </section>
+
+    <!-- ===== MORE TOOLS ===== -->
+    <section class="calc-panel" id="panel-more" aria-label="More Tools">
+      <div class="search-bar">
+        <span class="material-icons-round">search</span>
+        <input type="text" id="moreSearch" placeholder="Search tools..." aria-label="Search tools">
+      </div>
+      <div class="more-grid" id="moreGrid">
+        <div class="more-item" data-tool="age"><span class="material-icons-round">cake</span><span>Age Calculator</span></div>
+        <div class="more-item" data-tool="date"><span class="material-icons-round">event</span><span>Date Difference</span></div>
+        <div class="more-item" data-tool="time"><span class="material-icons-round">schedule</span><span>Time Calculator</span></div>
+        <div class="more-item" data-tool="bmi"><span class="material-icons-round">monitor_weight</span><span>BMI Calculator</span></div>
+        <div class="more-item" data-tool="calorie"><span class="material-icons-round">local_fire_department</span><span>Calorie Calc</span></div>
+        <div class="more-item" data-tool="gpa"><span class="material-icons-round">school</span><span>GPA / CGPA</span></div>
+        <div class="more-item" data-tool="percentage"><span class="material-icons-round">percent</span><span>Percentage</span></div>
+        <div class="more-item" data-tool="random"><span class="material-icons-round">casino</span><span>Random Number</span></div>
+        <div class="more-item" data-tool="password"><span class="material-icons-round">password</span><span>Password Gen</span></div>
+        <div class="more-item" data-tool="stats"><span class="material-icons-round">analytics</span><span>Statistics</span></div>
+        <div class="more-item" data-tool="matrix"><span class="material-icons-round">grid_on</span><span>Matrix Calc</span></div>
+        <div class="more-item" data-tool="complex"><span class="material-icons-round">functions</span><span>Complex Num</span></div>
+        <div class="more-item" data-tool="love"><span class="material-icons-round">favorite</span><span>Love Percent</span></div>
+        <div class="more-item" data-tool="notes"><span class="material-icons-round">sticky_note_2</span><span>Notes</span></div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS ===== -->
+    <section class="calc-panel" id="panel-settings" aria-label="Settings">
+      <div class="settings-section">
+        <div class="settings-title">Appearance</div>
+        <div class="settings-item">
+          <div class="settings-item-label"><span class="material-icons-round">dark_mode</span>Dark Mode</div>
+          <div class="toggle on" id="toggleTheme" role="switch" aria-checked="true" tabindex="0" aria-label="Toggle dark mode"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-label"><span class="material-icons-round">contrast</span>High Contrast</div>
+          <div class="toggle" id="toggleContrast" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle high contrast"></div>
+        </div>
+        <div class="settings-title" style="margin-top:8px">Accent Color</div>
+        <div class="color-row" id="colorRow">
+          <div class="color-swatch active" data-color="#6c5ce7" style="background:#6c5ce7" title="Purple"></div>
+          <div class="color-swatch" data-color="#e84393" style="background:#e84393" title="Pink"></div>
+          <div class="color-swatch" data-color="#00cec9" style="background:#00cec9" title="Teal"></div>
+          <div class="color-swatch" data-color="#00b894" style="background:#00b894" title="Green"></div>
+          <div class="color-swatch" data-color="#fdcb6e" style="background:#fdcb6e" title="Gold"></div>
+          <div class="color-swatch" data-color="#e17055" style="background:#e17055" title="Coral"></div>
+          <div class="color-swatch" data-color="#0984e3" style="background:#0984e3" title="Blue"></div>
+        </div>
+        <div class="settings-title" style="margin-top:8px">Button Size</div>
+        <div class="settings-item">
+          <div class="settings-item-label"><span class="material-icons-round">format_size</span>Size</div>
+          <input type="range" class="range-slider" id="btnSizeSlider" min="44" max="68" value="56" aria-label="Button size">
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-label"><span class="material-icons-round">animation</span>Animations</div>
+          <div class="toggle on" id="toggleAnim" role="switch" aria-checked="true" tabindex="0" aria-label="Toggle animations"></div>
+        </div>
+        <div class="settings-title" style="margin-top:8px">Data</div>
+        <div class="settings-item" style="cursor:pointer" id="btnClearHistory">
+          <div class="settings-item-label"><span class="material-icons-round">delete_sweep</span>Clear History</div>
+          <span class="material-icons-round" style="color:var(--text3)">chevron_right</span>
+        </div>
+        <div class="settings-item" style="cursor:pointer" id="btnExportData">
+          <div class="settings-item-label"><span class="material-icons-round">download</span>Export Data (CSV)</div>
+          <span class="material-icons-round" style="color:var(--text3)">chevron_right</span>
+        </div>
+        <div class="settings-title" style="margin-top:8px">App</div>
+        <div class="settings-item" style="cursor:pointer" id="btnInstall">
+          <div class="settings-item-label"><span class="material-icons-round">install_mobile</span>Install App</div>
+          <span class="material-icons-round" style="color:var(--text3)">chevron_right</span>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-label"><span class="material-icons-round">info</span>Version 2.0.26</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Floating Action Button - Copy -->
+  <button class="fab" id="fabCopy" title="Copy Result" aria-label="Copy result">
+    <span class="material-icons-round">content_copy</span>
+  </button>
+
+  <!-- Bottom Tab Bar -->
+  <nav class="tab-bar" role="tablist" aria-label="Main navigation">
+    <button class="tab-item active" data-tab="basic" role="tab" aria-selected="true">
+      <span class="material-icons-round">calculate</span>Calc
+    </button>
+    <button class="tab-item" data-tab="converter" role="tab" aria-selected="false">
+      <span class="material-icons-round">straighten</span>Convert
+    </button>
+    <button class="tab-item" data-tab="financial" role="tab" aria-selected="false">
+      <span class="material-icons-round">account_balance</span>Finance
+    </button>
+    <button class="tab-item" data-tab="more" role="tab" aria-selected="false">
+      <span class="material-icons-round">apps</span>More
+    </button>
+    <button class="tab-item" data-tab="settings" role="tab" aria-selected="false">
+      <span class="material-icons-round">tune</span>Settings
+    </button>
+  </nav>
+</div>
+
+<!-- ===== AD CONTAINER (runs at bottom) ===== -->
+<div class="ad-container" id="adContainer">
+  <div class="ad-fallback">📢 Ad space — loading ...</div>
+</div>
+
+<!-- History Modal -->
+<div class="modal-overlay" id="historyModal" role="dialog" aria-label="Calculator history">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>History</h3>
+      <button class="modal-close" onclick="closeModal('historyModal')" aria-label="Close"><span class="material-icons-round">close</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="history-list" id="historyList">
+        <div class="history-empty">No calculations yet</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tool Modal (for More tools) -->
+<div class="modal-overlay" id="toolModal" role="dialog" aria-label="Tool">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="toolModalTitle">Tool</h3>
+      <button class="modal-close" onclick="closeModal('toolModal')" aria-label="Close"><span class="material-icons-round">close</span></button>
+    </div>
+    <div class="modal-body" id="toolModalBody"></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<!-- ===== AD SCRIPT (injected) ===== -->
+<script>
+  // Insert the ad script into the ad container
+  (function() {
+    const container = document.getElementById('adContainer');
+    // The ad script requires a container; we'll inject the script tag
+    const script = document.createElement('script');
+    script.src = 'https://www.highperformanceformat.com/39abcec79d669435a2bc9da689b084f3/invoke.js';
+    script.async = true;
+    // Optional: set attributes if needed
+    container.appendChild(script);
+
+    // Also keep the fallback text until the ad loads
+    // The ad script will replace content inside the container
+    // We can add a small delay to show fallback
+    setTimeout(() => {
+      const fallback = container.querySelector('.ad-fallback');
+      if (fallback) fallback.textContent = '📢 Ad loading ...';
+    }, 100);
+  })();
+</script>
+
+<script>
+  /* ====================================================================
+     CalcPro — Full application logic (all tools, state, UI)
+     ==================================================================== */
+
+  // ===== APP STATE =====
+  const State = {
+    expr: '',
+    display: '0',
+    lastResult: null,
+    newNumber: true,
+    sciExpr: '',
+    sciDisplay: '0',
+    sciAngle: 'deg',
+    progExpr: '',
+    progDisplay: '0',
+    progBase: 10,
+    progLastVal: 0,
+    memory: 0,
+    hasMemory: false,
+    history: JSON.parse(localStorage.getItem('cp_history') || '[]'),
+    theme: localStorage.getItem('cp_theme') || 'dark',
+    contrast: localStorage.getItem('cp_contrast') === 'true',
+    accent: localStorage.getItem('cp_accent') || '#6c5ce7',
+    btnSize: parseInt(localStorage.getItem('cp_btnSize') || '56'),
+    animOn: localStorage.getItem('cp_anim') !== 'false',
+    undoStack: [],
+    redoStack: [],
+    voiceActive: false,
+    recognition: null,
+  };
+
+  // ===== INIT =====
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('hide');
+      setTimeout(() => document.getElementById('splash')?.remove(), 600);
+    }, 1400);
+
+    applySettings();
+    initTabs();
+    initModeSwitches();
+    initBasicCalc();
+    initScientificCalc();
+    initProgrammerCalc();
+    initConverter();
+    initFinancialTabs();
+    initCurrencyConverter();
+    initMoreTools();
+    initSettings();
+    initNavActions();
+    initKeyboard();
+    initRipple();
+    initPWA();
+    updateMemoryIndicator();
+  });
+
+  // ===== SETTINGS APPLICATION =====
+  function applySettings() {
+    document.documentElement.setAttribute('data-theme', State.theme);
+    document.documentElement.setAttribute('data-contrast', State.contrast ? 'high' : 'normal');
+    document.documentElement.style.setProperty('--accent', State.accent);
+    const c = State.accent;
+    document.documentElement.style.setProperty('--accent-grad', `linear-gradient(135deg, ${c}, ${lighten(c, 20)}, #00cec9)`);
+    document.documentElement.style.setProperty('--btn-op', hexToRgba(c, 0.25));
+    document.documentElement.style.setProperty('--btn-op-hover', hexToRgba(c, 0.4));
+    document.querySelectorAll('.calc-btn').forEach(b => b.style.height = State.btnSize + 'px');
+    if (!State.animOn) {
+      document.documentElement.style.setProperty('--transition', '0s');
+      document.querySelectorAll('.bg-orb').forEach(o => o.style.animation = 'none');
+    }
+    const toggle = document.getElementById('toggleTheme');
+    toggle.classList.toggle('on', State.theme === 'dark');
+    toggle.setAttribute('aria-checked', State.theme === 'dark');
+    const ct = document.getElementById('toggleContrast');
+    ct.classList.toggle('on', State.contrast);
+    ct.setAttribute('aria-checked', State.contrast);
+    const at = document.getElementById('toggleAnim');
+    at.classList.toggle('on', State.animOn);
+    at.setAttribute('aria-checked', State.animOn);
+    document.querySelectorAll('.color-swatch').forEach(s => {
+      s.classList.toggle('active', s.dataset.color === State.accent);
+    });
+    document.getElementById('btnSizeSlider').value = State.btnSize;
+    document.querySelector('meta[name="theme-color"]').content = State.theme === 'dark' ? '#0a0e1a' : '#eef1f6';
+  }
+
+  // ===== TAB NAVIGATION =====
+  function initTabs() {
+    document.querySelectorAll('.tab-item').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        let panelId = target;
+        if (target === 'basic') panelId = 'basic';
+        else if (target === 'converter') panelId = 'converter';
+        else if (target === 'financial') panelId = 'financial';
+        else if (target === 'more') panelId = 'more';
+        else if (target === 'settings') panelId = 'settings';
+        document.querySelectorAll('.tab-item').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + panelId).classList.add('active');
+      });
+    });
+  }
+
+  // ===== MODE SWITCH =====
+  function initModeSwitches() {
+    document.querySelectorAll('.mode-chip[data-mode]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const mode = chip.dataset.mode;
+        document.querySelectorAll('.mode-chip[data-mode]').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll(`.mode-chip[data-mode="${mode}"]`).forEach(c => c.classList.add('active'));
+        document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + mode).classList.add('active');
+        document.querySelectorAll('.tab-item').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+        document.querySelector('.tab-item[data-tab="basic"]').classList.add('active');
+        document.querySelector('.tab-item[data-tab="basic"]').setAttribute('aria-selected', 'true');
+      });
+    });
+  }
+
+  // ===== RIPPLE =====
+  function initRipple() {
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.calc-btn, .nav-btn, .mode-chip, .more-item, .form-btn, .fab, .toggle');
+      if (!btn || !State.animOn) return;
+      const ripple = document.createElement('span');
+      ripple.classList.add('ripple');
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+      btn.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+  }
+
+  // ===== TOAST =====
+  function showToast(message, icon = 'check_circle') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span class="material-icons-round">${icon}</span>${message}`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.classList.add('leaving'); setTimeout(() => toast.remove(), 300); }, 2500);
+  }
+
+  // ===== MODAL HELPERS =====
+  function openModal(id) { document.getElementById(id).classList.add('show'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('show'); });
+  });
+
+  // ===== HISTORY =====
+  function addToHistory(expr, result) {
+    State.history.unshift({ expr, result, time: Date.now() });
+    if (State.history.length > 100) State.history.pop();
+    localStorage.setItem('cp_history', JSON.stringify(State.history));
+  }
+  function renderHistory() {
+    const list = document.getElementById('historyList');
+    if (State.history.length === 0) {
+      list.innerHTML = '<div class="history-empty">No calculations yet</div>';
+      return;
+    }
+    list.innerHTML = State.history.map((h, i) => `
+      <div class="history-item" data-idx="${i}" tabindex="0">
+        <div class="history-expr">${escHtml(h.expr)}</div>
+        <div class="history-val">${escHtml(h.result)}</div>
+      </div>
+    `).join('');
+    list.querySelectorAll('.history-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const h = State.history[item.dataset.idx];
+        copyToClipboard(h.result);
+        showToast('Result copied');
+      });
+    });
+  }
+
+  // ===== BASIC CALC =====
+  function initBasicCalc() {
+    const grid = document.getElementById('basicGrid');
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.calc-btn');
+      if (!btn) return;
+      handleBasicAction(btn.dataset.action, btn.dataset.val);
+    });
+  }
+
+  function handleBasicAction(action, val) {
+    const exprEl = document.getElementById('basicExpr');
+    const resultEl = document.getElementById('basicResult');
+
+    switch (action) {
+      case 'num':
+        if (State.newNumber) { State.display = val; State.newNumber = false; }
+        else { State.display = State.display === '0' ? val : State.display + val; }
+        break;
+      case 'decimal':
+        if (State.newNumber) { State.display = '0.'; State.newNumber = false; }
+        else if (!State.display.includes('.')) { State.display += '.'; }
+        break;
+      case 'op':
+        State.expr += State.display + ' ' + val + ' ';
+        State.newNumber = true;
+        break;
+      case 'percent':
+        State.display = String(parseFloat(State.display) / 100);
+        break;
+      case 'clear':
+        State.expr = ''; State.display = '0'; State.newNumber = true; State.lastResult = null;
+        break;
+      case 'backspace':
+        if (!State.newNumber && State.display.length > 1) { State.display = State.display.slice(0, -1); }
+        else { State.display = '0'; State.newNumber = true; }
+        break;
+      case 'equals':
+        if (State.expr.trim()) {
+          const fullExpr = State.expr + State.display;
+          try {
+            const result = safeEval(fullExpr);
+            if (result !== null && isFinite(result)) {
+              const formatted = formatNumber(result);
+              exprEl.textContent = fullExpr + ' =';
+              resultEl.textContent = formatted;
+              addToHistory(fullExpr, formatted);
+              State.display = String(result);
+              State.expr = '';
+              State.newNumber = true;
+              State.lastResult = result;
+              adjustResultSize(resultEl, formatted);
+              return;
             }
-            previousDisplay.innerText = previousInput;
-
-            // Basic auto-scaling font size for long numbers
-            if (currentInput.length > 10) {
-                currentDisplay.style.fontSize = '1.5rem';
-            } else {
-                currentDisplay.style.fontSize = '2.5rem';
-            }
+          } catch (e) { /* fall through */ }
+          exprEl.textContent = fullExpr + ' =';
+          resultEl.textContent = 'Error';
+          State.display = '0'; State.expr = ''; State.newNumber = true;
+          return;
         }
+        break;
+      case 'mrc':
+        if (State.hasMemory) { State.display = String(State.memory); State.newNumber = true; }
+        break;
+      case 'mplus':
+        State.memory += parseFloat(State.display) || 0;
+        State.hasMemory = true; State.newNumber = true;
+        updateMemoryIndicator();
+        showToast('Added to memory', 'add_circle');
+        break;
+      case 'mminus':
+        State.memory -= parseFloat(State.display) || 0;
+        State.hasMemory = true; State.newNumber = true;
+        updateMemoryIndicator();
+        showToast('Subtracted from memory', 'remove_circle');
+        break;
+    }
+    exprEl.textContent = State.expr;
+    resultEl.textContent = State.display;
+    adjustResultSize(resultEl, State.display);
+  }
 
-        function appendNumber(number) {
-            if (currentInput === '0' || shouldResetScreen) {
-                currentInput = number;
-                shouldResetScreen = false;
-            } else {
-                if (number === '.' && currentInput.includes('.')) return;
-                currentInput += number;
+  function updateMemoryIndicator() {
+    document.querySelectorAll('.display-memory').forEach(el => {
+      el.classList.toggle('show', State.hasMemory);
+    });
+  }
+
+  function adjustResultSize(el, text) {
+    el.classList.remove('small', 'xsmall');
+    if (text.length > 16) el.classList.add('xsmall');
+    else if (text.length > 10) el.classList.add('small');
+  }
+
+  // ===== SCIENTIFIC CALC =====
+  function initScientificCalc() {
+    const grid = document.getElementById('sciGrid');
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.calc-btn');
+      if (!btn) return;
+      if (btn.dataset.sciFn) { handleSciFn(btn.dataset.sciFn); return; }
+      if (btn.dataset.action) { handleSciAction(btn.dataset.action, btn.dataset.val); return; }
+    });
+    document.getElementById('sciDeg').addEventListener('click', () => {
+      State.sciAngle = 'deg';
+      document.getElementById('sciDeg').classList.add('active');
+      document.getElementById('sciRad').classList.remove('active');
+    });
+    document.getElementById('sciRad').addEventListener('click', () => {
+      State.sciAngle = 'rad';
+      document.getElementById('sciRad').classList.add('active');
+      document.getElementById('sciDeg').classList.remove('active');
+    });
+  }
+
+  function handleSciAction(action, val) {
+    const exprEl = document.getElementById('sciExpr');
+    const resultEl = document.getElementById('sciResult');
+
+    switch (action) {
+      case 'num':
+        if (State.newNumber) { State.sciDisplay = val; State.newNumber = false; }
+        else { State.sciDisplay = State.sciDisplay === '0' ? val : State.sciDisplay + val; }
+        break;
+      case 'decimal':
+        if (State.newNumber) { State.sciDisplay = '0.'; State.newNumber = false; }
+        else if (!State.sciDisplay.includes('.')) { State.sciDisplay += '.'; }
+        break;
+      case 'op':
+        State.sciExpr += State.sciDisplay + ' ' + val + ' ';
+        State.newNumber = true;
+        break;
+      case 'percent':
+        State.sciDisplay = String(parseFloat(State.sciDisplay) / 100);
+        break;
+      case 'clear':
+        State.sciExpr = ''; State.sciDisplay = '0'; State.newNumber = true;
+        break;
+      case 'backspace':
+        if (!State.newNumber && State.sciDisplay.length > 1) { State.sciDisplay = State.sciDisplay.slice(0, -1); }
+        else { State.sciDisplay = '0'; State.newNumber = true; }
+        break;
+      case 'equals':
+        if (State.sciExpr.trim()) {
+          const fullExpr = State.sciExpr + State.sciDisplay;
+          try {
+            const result = safeEval(fullExpr);
+            if (result !== null && isFinite(result)) {
+              const formatted = formatNumber(result);
+              exprEl.textContent = fullExpr + ' =';
+              resultEl.textContent = formatted;
+              addToHistory(fullExpr, formatted);
+              State.sciDisplay = String(result);
+              State.sciExpr = '';
+              State.newNumber = true;
+              adjustResultSize(resultEl, formatted);
+              return;
             }
-            updateDisplay();
+          } catch (e) {}
+          exprEl.textContent = fullExpr + ' =';
+          resultEl.textContent = 'Error';
+          State.sciDisplay = '0'; State.sciExpr = ''; State.newNumber = true;
+          return;
         }
+        break;
+      case 'mrc':
+        if (State.hasMemory) { State.sciDisplay = String(State.memory); State.newNumber = true; }
+        break;
+      case 'mplus':
+        State.memory += parseFloat(State.sciDisplay) || 0;
+        State.hasMemory = true; State.newNumber = true; updateMemoryIndicator();
+        break;
+      case 'mminus':
+        State.memory -= parseFloat(State.sciDisplay) || 0;
+        State.hasMemory = true; State.newNumber = true; updateMemoryIndicator();
+        break;
+    }
+    exprEl.textContent = State.sciExpr;
+    resultEl.textContent = State.sciDisplay;
+    adjustResultSize(resultEl, State.sciDisplay);
+  }
 
-        function appendOperator(operator) {
-            if (lastOperator !== null && !shouldResetScreen) {
-                calculate();
-            }
-            
-            // Percentage handling
-            if (operator === '%') {
-                currentInput = (parseFloat(currentInput) / 100).toString();
-                updateDisplay();
-                return;
-            }
+  function handleSciFn(fn) {
+    const exprEl = document.getElementById('sciExpr');
+    const resultEl = document.getElementById('sciResult');
+    const x = parseFloat(State.sciDisplay) || 0;
+    const toRad = State.sciAngle === 'deg' ? (a) => a * Math.PI / 180 : (a) => a;
+    const fromRad = State.sciAngle === 'deg' ? (a) => a * 180 / Math.PI : (a) => a;
+    let result;
 
-            previousInput = `${currentInput} ${getOperatorSymbol(operator)}`;
-            lastOperator = operator;
-            shouldResetScreen = true;
-            updateDisplay();
+    try {
+      switch (fn) {
+        case 'sin': result = Math.sin(toRad(x)); break;
+        case 'cos': result = Math.cos(toRad(x)); break;
+        case 'tan': result = Math.tan(toRad(x)); break;
+        case 'cot': result = 1 / Math.tan(toRad(x)); break;
+        case 'sec': result = 1 / Math.cos(toRad(x)); break;
+        case 'csc': result = 1 / Math.sin(toRad(x)); break;
+        case 'log': result = Math.log10(x); break;
+        case 'ln': result = Math.log(x); break;
+        case 'sqrt': result = Math.sqrt(x); break;
+        case 'cbrt': result = Math.cbrt(x); break;
+        case 'square': result = x * x; break;
+        case 'cube': result = x * x * x; break;
+        case 'fact': result = factorial(Math.round(x)); break;
+        case 'exp': result = Math.exp(x); break;
+        case 'power':
+          State.sciExpr += State.sciDisplay + ' ** ';
+          State.newNumber = true;
+          exprEl.textContent = State.sciExpr;
+          return;
+        case 'inv': result = 1 / x; break;
+        case 'abs': result = Math.abs(x); break;
+        case 'pi': result = Math.PI; break;
+        case 'e': result = Math.E; break;
+        case 'mod':
+          State.sciExpr += State.sciDisplay + ' % ';
+          State.newNumber = true;
+          exprEl.textContent = State.sciExpr;
+          return;
+        case 'negate':
+          State.sciDisplay = String(-x);
+          resultEl.textContent = State.sciDisplay;
+          return;
+        default: return;
+      }
+      if (isFinite(result)) {
+        const label = fn === 'pi' ? 'π' : fn === 'e' ? 'e' : fn + '(' + x + ')';
+        exprEl.textContent = label + ' =';
+        const formatted = formatNumber(result);
+        resultEl.textContent = formatted;
+        addToHistory(label, formatted);
+        State.sciDisplay = String(result);
+        State.newNumber = true;
+        adjustResultSize(resultEl, formatted);
+      } else {
+        resultEl.textContent = 'Error';
+        State.sciDisplay = '0'; State.newNumber = true;
+      }
+    } catch (e) {
+      resultEl.textContent = 'Error';
+      State.sciDisplay = '0'; State.newNumber = true;
+    }
+  }
+
+  function factorial(n) {
+    if (n < 0) return NaN;
+    if (n > 170) return Infinity;
+    let r = 1;
+    for (let i = 2; i <= n; i++) r *= i;
+    return r;
+  }
+
+  // ===== PROGRAMMER CALC =====
+  function initProgrammerCalc() {
+    const grid = document.getElementById('progGrid');
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.calc-btn');
+      if (!btn) return;
+      if (btn.dataset.progFn) { handleProgFn(btn.dataset.progFn); return; }
+      if (btn.dataset.action) { handleProgAction(btn.dataset.action, btn.dataset.val); return; }
+    });
+    document.querySelectorAll('[data-prog-base]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const bases = { dec: 10, hex: 16, oct: 8, bin: 2 };
+        State.progBase = bases[chip.dataset.progBase];
+        document.querySelectorAll('[data-prog-base]').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        State.progDisplay = fromDec(State.progLastVal, State.progBase);
+        updateBaseDisplay(State.progLastVal);
+        document.getElementById('progResult').textContent = State.progDisplay;
+        updateProgButtons();
+      });
+    });
+    updateProgButtons();
+  }
+
+  function updateProgButtons() {
+    const grid = document.getElementById('progGrid');
+    const disableMap = {
+      2: ['A','B','C','D','E','F','2','3','4','5','6','7','8','9'],
+      8: ['A','B','C','D','E','F','8','9'],
+      10: ['A','B','C','D','E','F'],
+      16: []
+    };
+    const disabled = disableMap[State.progBase] || [];
+    grid.querySelectorAll('.calc-btn[data-val]').forEach(btn => {
+      const v = btn.dataset.val;
+      btn.style.opacity = disabled.includes(v) ? '0.3' : '1';
+      btn.style.pointerEvents = disabled.includes(v) ? 'none' : 'auto';
+    });
+  }
+
+  function handleProgAction(action, val) {
+    const exprEl = document.getElementById('progExpr');
+    const resultEl = document.getElementById('progResult');
+
+    switch (action) {
+      case 'num':
+        if (State.newNumber) { State.progDisplay = val; State.newNumber = false; }
+        else { State.progDisplay = State.progDisplay === '0' ? val : State.progDisplay + val; }
+        State.progLastVal = toDec(State.progDisplay, State.progBase);
+        updateBaseDisplay(State.progLastVal);
+        break;
+      case 'op':
+        State.progExpr += State.progDisplay + ' ' + val + ' ';
+        State.newNumber = true;
+        break;
+      case 'clear':
+        State.progExpr = ''; State.progDisplay = '0'; State.progLastVal = 0; State.newNumber = true;
+        updateBaseDisplay(0);
+        break;
+      case 'backspace':
+        if (!State.newNumber && State.progDisplay.length > 1) { State.progDisplay = State.progDisplay.slice(0, -1); }
+        else { State.progDisplay = '0'; State.newNumber = true; }
+        State.progLastVal = toDec(State.progDisplay, State.progBase);
+        updateBaseDisplay(State.progLastVal);
+        break;
+      case 'equals':
+        if (State.progExpr.trim()) {
+          const fullExpr = State.progExpr + State.progDisplay;
+          try {
+            const result = safeEval(fullExpr);
+            if (result !== null && isFinite(result)) {
+              const intResult = Math.floor(result);
+              exprEl.textContent = fullExpr + ' =';
+              State.progDisplay = fromDec(intResult, State.progBase);
+              resultEl.textContent = State.progDisplay;
+              State.progLastVal = intResult;
+              updateBaseDisplay(intResult);
+              addToHistory(fullExpr, State.progDisplay);
+              State.progExpr = ''; State.newNumber = true;
+              adjustResultSize(resultEl, State.progDisplay);
+              return;
+            }
+          } catch (e) {}
+          exprEl.textContent = fullExpr + ' =';
+          resultEl.textContent = 'Error';
+          State.progDisplay = '0'; State.progExpr = ''; State.newNumber = true;
+          return;
         }
+        break;
+    }
+    exprEl.textContent = State.progExpr;
+    resultEl.textContent = State.progDisplay;
+    adjustResultSize(resultEl, State.progDisplay);
+  }
 
-        function getOperatorSymbol(op) {
-            if (op === '*') return '×';
-            if (op === '/') return '÷';
-            return op;
+  function handleProgFn(fn) {
+    const resultEl = document.getElementById('progResult');
+    const v = State.progLastVal;
+    let result;
+    switch (fn) {
+      case 'and':
+        State.progExpr += State.progDisplay + ' & ';
+        State.newNumber = true;
+        document.getElementById('progExpr').textContent = State.progExpr;
+        return;
+      case 'or':
+        State.progExpr += State.progDisplay + ' | ';
+        State.newNumber = true;
+        document.getElementById('progExpr').textContent = State.progExpr;
+        return;
+      case 'xor':
+        State.progExpr += State.progDisplay + ' ^ ';
+        State.newNumber = true;
+        document.getElementById('progExpr').textContent = State.progExpr;
+        return;
+      case 'not': result = ~v & 0xFFFFFFFF; break;
+      case 'lsh':
+        State.progExpr += State.progDisplay + ' << ';
+        State.newNumber = true;
+        document.getElementById('progExpr').textContent = State.progExpr;
+        return;
+      case 'rsh':
+        State.progExpr += State.progDisplay + ' >> ';
+        State.newNumber = true;
+        document.getElementById('progExpr').textContent = State.progExpr;
+        return;
+      case 'negate':
+        result = -v;
+        break;
+      default: return;
+    }
+    if (isFinite(result)) {
+      const intResult = Math.floor(result);
+      State.progDisplay = fromDec(intResult, State.progBase);
+      resultEl.textContent = State.progDisplay;
+      State.progLastVal = intResult;
+      updateBaseDisplay(intResult);
+      State.newNumber = true;
+    }
+  }
+
+  function toDec(str, base) { return parseInt(str, base) || 0; }
+  function fromDec(num, base) {
+    if (base === 10) return String(num);
+    return num.toString(base).toUpperCase();
+  }
+  function updateBaseDisplay(decVal) {
+    document.getElementById('baseHex').textContent = fromDec(decVal, 16);
+    document.getElementById('baseDec').textContent = fromDec(decVal, 10);
+    document.getElementById('baseOct').textContent = fromDec(decVal, 8);
+    document.getElementById('baseBin').textContent = fromDec(decVal, 2);
+  }
+
+  // ===== SAFE EVAL =====
+  function safeEval(expr) {
+    let e = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/\^/g, '**');
+    if (!/^[0-9+\-*/().%&|^<>\s]+$/.test(e)) return null;
+    try {
+      const fn = new Function('return (' + e + ')');
+      const result = fn();
+      return typeof result === 'number' ? result : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  // ===== FORMAT NUMBER =====
+  function formatNumber(n) {
+    if (Number.isInteger(n) && Math.abs(n) < 1e15) return n.toLocaleString('en-US');
+    if (Math.abs(n) < 0.0001 || Math.abs(n) > 1e12) return n.toExponential(8);
+    const str = parseFloat(n.toPrecision(12)).toString();
+    const parts = str.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  }
+
+  // ===== UNIT CONVERTER =====
+  const UnitData = {
+    length: { units: ['Meter','Kilometer','Centimeter','Millimeter','Mile','Yard','Foot','Inch','Nautical Mile'], toBase: [1,1000,0.01,0.001,1609.344,0.9144,0.3048,0.0254,1852] },
+    weight: { units: ['Kilogram','Gram','Milligram','Pound','Ounce','Ton (metric)','Stone','Microgram'], toBase: [1,0.001,0.000001,0.453592,0.0283495,1000,6.35029,1e-9] },
+    area: { units: ['Sq Meter','Sq Kilometer','Sq Mile','Sq Yard','Sq Foot','Acre','Hectare','Sq Inch'], toBase: [1,1e6,2.59e6,0.836127,0.092903,4046.86,10000,0.000645] },
+    volume: { units: ['Liter','Milliliter','Cubic Meter','Gallon (US)','Quart','Pint','Cup','Fluid Oz','Cubic Inch'], toBase: [1,0.001,1000,3.78541,0.946353,0.473176,0.236588,0.0295735,0.0163871] },
+    temperature: { units: ['Celsius','Fahrenheit','Kelvin'], special: true },
+    speed: { units: ['m/s','km/h','mph','Knot','ft/s'], toBase: [1,0.277778,0.44704,0.514444,0.3048] },
+    time: { units: ['Second','Minute','Hour','Day','Week','Month (30d)','Year (365d)'], toBase: [1,60,3600,86400,604800,2592000,31536000] },
+    pressure: { units: ['Pascal','Kilopascal','Bar','PSI','mmHg','atm','Torr'], toBase: [1,1000,100000,6894.76,133.322,101325,133.322] },
+    energy: { units: ['Joule','Kilojoule','Calorie','kCal','Watt-hour','kWh','BTU','eV'], toBase: [1,1000,4.184,4184,3600,3600000,1055.06,1.602e-19] },
+    data: { units: ['Byte','KB','MB','GB','TB','PB','Bit','Kbit','Mbit','Gbit'], toBase: [1,1024,1048576,1073741824,1099511627776,1125899906842624,0.125,128,131072,134217728] },
+    angle: { units: ['Degree','Radian','Gradian','Arcminute','Arcsecond'], toBase: [1,57.2958,0.9,0.0166667,0.000277778] },
+    power: { units: ['Watt','Kilowatt','Horsepower','BTU/h','Cal/s','ft-lb/s'], toBase: [1,1000,745.7,0.293071,4.184,1.35582] },
+    frequency: { units: ['Hertz','Kilohertz','Megahertz','Gigahertz','RPM'], toBase: [1,1000,1e6,1e9,0.0166667] }
+  };
+  let currentConvType = 'length';
+
+  function initConverter() {
+    document.querySelectorAll('[data-conv]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        currentConvType = chip.dataset.conv;
+        document.querySelectorAll('[data-conv]').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        populateConverterUnits();
+        doConvert();
+      });
+    });
+    document.getElementById('convValue').addEventListener('input', doConvert);
+    document.getElementById('convFrom').addEventListener('change', doConvert);
+    document.getElementById('convTo').addEventListener('change', doConvert);
+    document.getElementById('convSwap').addEventListener('click', () => {
+      const from = document.getElementById('convFrom');
+      const to = document.getElementById('convTo');
+      [from.value, to.value] = [to.value, from.value];
+      doConvert();
+    });
+    document.getElementById('converterSearch').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('[data-conv]').forEach(chip => {
+        chip.style.display = chip.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+    populateConverterUnits();
+    doConvert();
+  }
+
+  function populateConverterUnits() {
+    const data = UnitData[currentConvType];
+    const from = document.getElementById('convFrom');
+    const to = document.getElementById('convTo');
+    from.innerHTML = data.units.map((u, i) => `<option value="${i}">${u}</option>`).join('');
+    to.innerHTML = data.units.map((u, i) => `<option value="${i}">${u}</option>`).join('');
+    if (data.units.length > 1) to.value = '1';
+  }
+
+  function doConvert() {
+    const val = parseFloat(document.getElementById('convValue').value) || 0;
+    const fromIdx = parseInt(document.getElementById('convFrom').value);
+    const toIdx = parseInt(document.getElementById('convTo').value);
+    const data = UnitData[currentConvType];
+    let result;
+    if (data.special && currentConvType === 'temperature') {
+      result = convertTemperature(val, fromIdx, toIdx);
+    } else {
+      const baseVal = val * data.toBase[fromIdx];
+      result = baseVal / data.toBase[toIdx];
+    }
+    document.getElementById('convResult').textContent = formatNumber(result);
+  }
+
+  function convertTemperature(val, from, to) {
+    let celsius;
+    if (from === 0) celsius = val;
+    else if (from === 1) celsius = (val - 32) * 5 / 9;
+    else celsius = val - 273.15;
+    if (to === 0) return celsius;
+    if (to === 1) return celsius * 9 / 5 + 32;
+    return celsius + 273.15;
+  }
+
+  // ===== FINANCIAL CALCULATORS =====
+  function initFinancialTabs() {
+    document.querySelectorAll('[data-fin]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('[data-fin]').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        document.querySelectorAll('.fin-form').forEach(f => f.style.display = 'none');
+        document.getElementById('fin-' + chip.dataset.fin).style.display = '';
+      });
+    });
+  }
+
+  // Financial functions (abridged for brevity; all referenced in HTML)
+  function calcEMI() {
+    const P = parseFloat(document.getElementById('emiAmount').value) || 0;
+    const annualRate = parseFloat(document.getElementById('emiRate').value) || 0;
+    const n = parseInt(document.getElementById('emiTenure').value) || 1;
+    const r = annualRate / 12 / 100;
+    let emi = (r === 0) ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    const total = emi * n;
+    const interest = total - P;
+    document.getElementById('emiResult').textContent = '$' + formatNumber(emi);
+    document.getElementById('emiTotal').textContent = '$' + formatNumber(total);
+    document.getElementById('emiInterest').textContent = '$' + formatNumber(interest);
+    addToHistory(`EMI: $${P} @ ${annualRate}% for ${n}mo`, '$' + formatNumber(emi) + '/mo');
+  }
+
+  function calcSIP() {
+    const M = parseFloat(document.getElementById('sipAmount').value) || 0;
+    const annualRate = parseFloat(document.getElementById('sipRate').value) || 0;
+    const years = parseInt(document.getElementById('sipYears').value) || 1;
+    const r = annualRate / 12 / 100;
+    const n = years * 12;
+    let fv = (r === 0) ? M * n : M * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+    const invested = M * n;
+    const returns = fv - invested;
+    document.getElementById('sipResult').textContent = '$' + formatNumber(fv);
+    document.getElementById('sipInvested').textContent = '$' + formatNumber(invested);
+    document.getElementById('sipReturns').textContent = '$' + formatNumber(returns);
+    addToHistory(`SIP: $${M}/mo @ ${annualRate}% for ${years}yr`, '$' + formatNumber(fv));
+  }
+
+  function calcLoan() {
+    const EMI = parseFloat(document.getElementById('loanMonthly').value) || 0;
+    const annualRate = parseFloat(document.getElementById('loanRate').value) || 0;
+    const n = parseInt(document.getElementById('loanTenure').value) || 1;
+    const r = annualRate / 12 / 100;
+    let maxLoan = (r === 0) ? EMI * n : EMI * (Math.pow(1 + r, n) - 1) / (r * Math.pow(1 + r, n));
+    document.getElementById('loanResult').textContent = '$' + formatNumber(Math.max(0, maxLoan));
+    addToHistory(`Max Loan: $${EMI}/mo @ ${annualRate}% for ${n}mo`, '$' + formatNumber(Math.max(0, maxLoan)));
+  }
+
+  function calcGST(type) {
+    const amount = parseFloat(document.getElementById('gstAmount').value) || 0;
+    const rate = parseFloat(document.getElementById('gstRate').value) || 0;
+    let result, tax;
+    if (type === 'add') { tax = amount * rate / 100; result = amount + tax; document.getElementById('gstLabel').textContent = 'Total with GST'; }
+    else { tax = amount * rate / (100 + rate); result = amount - tax; document.getElementById('gstLabel').textContent = 'Original before GST'; }
+    document.getElementById('gstResult').textContent = '$' + formatNumber(result);
+    document.getElementById('gstTax').textContent = '$' + formatNumber(tax);
+    addToHistory(`GST ${type}: $${amount} @ ${rate}%`, '$' + formatNumber(result));
+  }
+
+  function calcDiscount() {
+    const price = parseFloat(document.getElementById('discPrice').value) || 0;
+    const pct = parseFloat(document.getElementById('discPercent').value) || 0;
+    const saved = price * pct / 100;
+    const final_ = price - saved;
+    document.getElementById('discResult').textContent = '$' + formatNumber(final_);
+    document.getElementById('discSaved').textContent = '$' + formatNumber(saved);
+    addToHistory(`Discount: $${price} - ${pct}%`, '$' + formatNumber(final_));
+  }
+
+  function calcPL() {
+    const cost = parseFloat(document.getElementById('plCost').value) || 0;
+    const sell = parseFloat(document.getElementById('plSell').value) || 0;
+    const diff = sell - cost;
+    const pctVal = cost !== 0 ? (diff / cost * 100) : 0;
+    const isProfit = diff >= 0;
+    document.getElementById('plResult').textContent = (isProfit ? 'Profit: ' : 'Loss: ') + '$' + formatNumber(Math.abs(diff));
+    document.getElementById('plResult').style.color = isProfit ? 'var(--accent2)' : '#f87171';
+    document.getElementById('plLabel').textContent = isProfit ? 'You made a profit' : 'You incurred a loss';
+    document.getElementById('plPercent').textContent = (isProfit ? '+' : '') + pctVal.toFixed(2) + '%';
+    document.getElementById('plPercent').style.color = isProfit ? 'var(--accent2)' : '#f87171';
+    addToHistory(`P&L: Cost $${cost}, Sell $${sell}`, (isProfit ? 'Profit: ' : 'Loss: ') + '$' + formatNumber(Math.abs(diff)));
+  }
+
+  function calcTax() {
+    const income = parseFloat(document.getElementById('taxIncome').value) || 0;
+    const rate = parseFloat(document.getElementById('taxRate').value) || 0;
+    const tax = income * rate / 100;
+    const after = income - tax;
+    document.getElementById('taxResult').textContent = '$' + formatNumber(tax);
+    document.getElementById('taxAfter').textContent = '$' + formatNumber(after);
+    addToHistory(`Tax: $${income} @ ${rate}%`, '$' + formatNumber(tax));
+  }
+
+  function calcTip() {
+    const bill = parseFloat(document.getElementById('tipBill').value) || 0;
+    const pct = parseFloat(document.getElementById('tipPercent').value) || 0;
+    const people = parseInt(document.getElementById('tipPeople').value) || 1;
+    const tip = bill * pct / 100;
+    const total = bill + tip;
+    const perPerson = total / people;
+    document.getElementById('tipAmount').textContent = '$' + formatNumber(tip);
+    document.getElementById('tipTotal').textContent = '$' + formatNumber(total);
+    document.getElementById('tipPerPerson').textContent = '$' + formatNumber(perPerson);
+    addToHistory(`Tip: $${bill} + ${pct}%`, '$' + formatNumber(perPerson) + '/person');
+  }
+
+  function calcSplit() {
+    const bill = parseFloat(document.getElementById('splitBill').value) || 0;
+    const people = parseInt(document.getElementById('splitPeople').value) || 1;
+    const tipPct = parseFloat(document.getElementById('splitTip').value) || 0;
+    const total = bill * (1 + tipPct / 100);
+    const perPerson = total / people;
+    document.getElementById('splitResult').textContent = '$' + formatNumber(perPerson);
+    addToHistory(`Split: $${bill} + ${tipPct}% tip / ${people}`, '$' + formatNumber(perPerson) + '/person');
+  }
+
+  function calcFuel() {
+    const dist = parseFloat(document.getElementById('fuelDist').value) || 0;
+    const eff = parseFloat(document.getElementById('fuelEff').value) || 1;
+    const price = parseFloat(document.getElementById('fuelPrice').value) || 0;
+    const liters = dist / eff;
+    const cost = liters * price;
+    document.getElementById('fuelCost').textContent = '$' + formatNumber(cost);
+    document.getElementById('fuelLiters').textContent = formatNumber(liters) + ' L';
+    addToHistory(`Fuel: ${dist}km @ ${eff}km/L, $${price}/L`, '$' + formatNumber(cost));
+  }
+
+  function calcElectricity() {
+    const units = parseFloat(document.getElementById('elecUnits').value) || 0;
+    const rate = parseFloat(document.getElementById('elecRate').value) || 0;
+    const fixed = parseFloat(document.getElementById('elecFixed').value) || 0;
+    const total = units * rate + fixed;
+    document.getElementById('elecResult').textContent = '$' + formatNumber(total);
+    addToHistory(`Electricity: ${units}kWh @ $${rate}/kWh + $${fixed}`, '$' + formatNumber(total));
+  }
+
+  // ===== CURRENCY CONVERTER =====
+  const CurrencyData = {
+    USD: { name: 'US Dollar', rate: 1 },
+    EUR: { name: 'Euro', rate: 0.92 },
+    GBP: { name: 'British Pound', rate: 0.79 },
+    JPY: { name: 'Japanese Yen', rate: 149.5 },
+    INR: { name: 'Indian Rupee', rate: 83.1 },
+    CAD: { name: 'Canadian Dollar', rate: 1.36 },
+    AUD: { name: 'Australian Dollar', rate: 1.53 },
+    CHF: { name: 'Swiss Franc', rate: 0.88 },
+    CNY: { name: 'Chinese Yuan', rate: 7.24 },
+    KRW: { name: 'South Korean Won', rate: 1320 },
+    SGD: { name: 'Singapore Dollar', rate: 1.34 },
+    HKD: { name: 'Hong Kong Dollar', rate: 7.82 },
+    SEK: { name: 'Swedish Krona', rate: 10.45 },
+    NOK: { name: 'Norwegian Krone', rate: 10.6 },
+    MXN: { name: 'Mexican Peso', rate: 17.15 },
+    BRL: { name: 'Brazilian Real', rate: 4.97 },
+    ZAR: { name: 'South African Rand', rate: 18.6 },
+    RUB: { name: 'Russian Ruble', rate: 91.5 },
+    TRY: { name: 'Turkish Lira', rate: 28.9 },
+    AED: { name: 'UAE Dirham', rate: 3.67 },
+    SAR: { name: 'Saudi Riyal', rate: 3.75 },
+    THB: { name: 'Thai Baht', rate: 35.2 },
+    MYR: { name: 'Malaysian Ringgit', rate: 4.72 },
+    PHP: { name: 'Philippine Peso', rate: 56.1 },
+    IDR: { name: 'Indonesian Rupiah', rate: 15600 },
+    PLN: { name: 'Polish Zloty', rate: 4.02 },
+    NZD: { name: 'New Zealand Dollar', rate: 1.63 },
+    DKK: { name: 'Danish Krone', rate: 6.87 },
+  };
+
+  function initCurrencyConverter() {
+    const fromSel = document.getElementById('currFrom');
+    const toSel = document.getElementById('currTo');
+    const codes = Object.keys(CurrencyData);
+    fromSel.innerHTML = codes.map(c => `<option value="${c}">${c} — ${CurrencyData[c].name}</option>`).join('');
+    toSel.innerHTML = codes.map(c => `<option value="${c}">${c} — ${CurrencyData[c].name}</option>`).join('');
+    toSel.value = 'EUR';
+  }
+
+  function calcCurrency() {
+    const amount = parseFloat(document.getElementById('currAmount').value) || 0;
+    const from = document.getElementById('currFrom').value;
+    const to = document.getElementById('currTo').value;
+    const inUSD = amount / CurrencyData[from].rate;
+    const result = inUSD * CurrencyData[to].rate;
+    document.getElementById('currResult').textContent = formatNumber(result) + ' ' + to;
+    document.getElementById('currLabel').textContent = `${amount} ${from} =`;
+    addToHistory(`Currency: ${amount} ${from} → ${to}`, formatNumber(result) + ' ' + to);
+  }
+
+  function swapCurrency() {
+    const from = document.getElementById('currFrom');
+    const to = document.getElementById('currTo');
+    [from.value, to.value] = [to.value, from.value];
+  }
+
+  // ===== MORE TOOLS =====
+  function initMoreTools() {
+    document.getElementById('moreSearch').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('.more-item').forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+    document.querySelectorAll('.more-item').forEach(item => {
+      item.addEventListener('click', () => openTool(item.dataset.tool));
+    });
+  }
+
+  // Tool functions (abridged for space, but all referenced in HTML)
+  function openTool(tool) {
+    const titleEl = document.getElementById('toolModalTitle');
+    const bodyEl = document.getElementById('toolModalBody');
+    const toolConfigs = {
+      age: { title: 'Age Calculator', html: `<div class="form-panel" style="padding:0"><div class="form-group"><label class="form-label">Date of Birth</label><input type="date" class="form-input" id="ageDob"></div><div class="form-group"><label class="form-label">As of Date</label><input type="date" class="form-input" id="ageAsOf"></div><button class="form-btn" onclick="calcAge()">Calculate Age</button><div class="form-result"><div class="form-result-value" id="ageResult">—</div><div class="form-result-label">Your Age</div></div><div class="form-result" style="margin-top:8px;background:rgba(0,206,201,0.1);border-color:rgba(0,206,201,0.2)"><div class="form-result-value" id="ageDays" style="font-size:1.1rem;color:var(--accent2)">—</div><div class="form-result-label">Total Days</div></div></div>` },
+      date: { title: 'Date Difference', html: `<div class="form-panel" style="padding:0"><div class="form-row"><div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" id="dateStart"></div><div class="form-group"><label class="form-label">End Date</label><input type="date" class="form-input" id="dateEnd"></div></div><button class="form-btn" onclick="calcDateDiff()">Calculate</button><div class="form-result"><div class="form-result-value" id="dateResult">—</div><div class="form-result-label">Difference</div></div></div>` },
+      time: { title: 'Time Calculator', html: `<div class="form-panel" style="padding:0"><div class="form-row"><div class="form-group"><label class="form-label">Start Time</label><input type="time" class="form-input" id="timeStart" value="09:00"></div><div class="form-group"><label class="form-label">End Time</label><input type="time" class="form-input" id="timeEnd" value="17:30"></div></div><button class="form-btn" onclick="calcTimeDiff()">Calculate</button><div class="form-result"><div class="form-result-value" id="timeResult">—</div><div class="form-result-label">Duration</div></div></div>` },
+      bmi: { title: 'BMI Calculator', html: `<div class="form-panel" style="padding:0"><div class="form-row"><div class="form-group"><label class="form-label">Weight (kg)</label><input type="number" class="form-input" id="bmiWeight" value="70"></div><div class="form-group"><label class="form-label">Height (cm)</label><input type="number" class="form-input" id="bmiHeight" value="170"></div></div><button class="form-btn" onclick="calcBMI()">Calculate BMI</button><div class="form-result"><div class="form-result-value" id="bmiResult">—</div><div class="form-result-label" id="bmiLabel">BMI</div></div></div>` },
+      calorie: { title: 'Calorie Calculator', html: `<div class="form-panel" style="padding:0"><div class="form-row"><div class="form-group"><label class="form-label">Age</label><input type="number" class="form-input" id="calAge" value="25"></div><div class="form-group"><label class="form-label">Gender</label><select class="form-select" id="calGender"><option value="male">Male</option><option value="female">Female</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Weight (kg)</label><input type="number" class="form-input" id="calWeight" value="70"></div><div class="form-group"><label class="form-label">Height (cm)</label><input type="number" class="form-input" id="calHeight" value="170"></div></div><div class="form-group"><label class="form-label">Activity Level</label><select class="form-select" id="calActivity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55" selected>Moderate</option><option value="1.725">Active</option><option value="1.9">Very Active</option></select></div><button class="form-btn" onclick="calcCalorie()">Calculate</button><div class="form-result"><div class="form-result-value" id="calResult">—</div><div class="form-result-label">Daily Calories</div></div></div>` },
+      gpa: { title: 'GPA / CGPA Calculator', html: `<div class="form-panel" style="padding:0"><div id="gpaSubjects"><div class="form-row gpa-row"><div class="form-group"><input type="text" class="form-input" placeholder="Subject" value="Math"></div><div class="form-group"><select class="form-select gpa-grade"><option value="4">A+</option><option value="4">A</option><option value="3.7">A-</option><option value="3.3">B+</option><option value="3">B</option><option value="2.7">B-</option><option value="2.3">C+</option><option value="2">C</option><option value="1.7">C-</option><option value="1">D</option><option value="0">F</option></select></div></div></div><button class="form-btn secondary" onclick="addGPASubject()" style="margin-top:8px">Add Subject</button><button class="form-btn" onclick="calcGPA()">Calculate GPA</button><div class="form-result"><div class="form-result-value" id="gpaResult">—</div><div class="form-result-label">GPA (out of 4.0)</div></div></div>` },
+      percentage: { title: 'Percentage Calculator', html: `<div class="form-panel" style="padding:0"><div class="form-group"><label class="form-label">What is <input type="number" class="form-input" id="pctA" value="15" style="width:80px;display:inline-block;padding:6px 8px"> % of <input type="number" class="form-input" id="pctB" value="200" style="width:80px;display:inline-block;padding:6px 8px"> ?</label></div><button class="form-btn" onclick="calcPercentage1()">Calculate</button><div class="form-result"><div class="form-result-value" id="pctResult1">—</div></div><div style="border-top:1px solid var(--card-border);margin:12px 0"></div><div class="form-group"><label class="form-label"><input type="number" class="form-input" id="pctC" value="30" style="width:80px;display:inline-block;padding:6px 8px"> is what % of <input type="number" class="form-input" id="pctD" value="150" style="width:80px;display:inline-block;padding:6px 8px"> ?</label></div><button class="form-btn" onclick="calcPercentage2()">Calculate</button><div class="form-result"><div class="form-result-value" id="pctResult2">—</div></div></div>` },
+      random: { title: 'Random Number Generator', html: `<div class="form-panel" style="padding:0"><div class="form-row"><div class="form-group"><label class="form-label">Min</label><input type="number" class="form-input" id="randMin" value="1"></div><div class="form-group"><label class="form-label">Max</label><input type="number" class="form-input" id="randMax" value="100"></div></div><div class="form-group"><label class="form-label">Count</label><input type="number" class="form-input" id="randCount" value="1" min="1" max="100"></div><button class="form-btn" onclick="calcRandom()">Generate</button><div class="form-result"><div class="form-result-value" id="randResult">—</div><div class="form-result-label">Random Number(s)</div></div></div>` },
+      password: { title: 'Password Generator', html: `<div class="form-panel" style="padding:0"><div class="form-row"><div class="form-group"><label class="form-label">Length</label><input type="number" class="form-input" id="pwLen" value="16" min="4" max="64"></div><div class="form-group"><label class="form-label">Count</label><input type="number" class="form-input" id="pwCount" value="3" min="1" max="10"></div></div><div class="form-row"><div class="settings-item"><div class="settings-item-label">Uppercase</div><div class="toggle on" id="pwUpper" role="switch" aria-checked="true" tabindex="0"></div></div><div class="settings-item"><div class="settings-item-label">Numbers</div><div class="toggle on" id="pwNums" role="switch" aria-checked="true" tabindex="0"></div></div></div><div class="settings-item"><div class="settings-item-label">Symbols</div><div class="toggle on" id="pwSyms" role="switch" aria-checked="true" tabindex="0"></div></div><button class="form-btn" onclick="genPassword()">Generate Passwords</button><div class="form-result" style="text-align:left"><div id="pwResult" style="font-family:var(--font-mono);font-size:0.85rem;line-height:1.8;word-break:break-all">—</div></div></div>` },
+      stats: { title: 'Statistics Calculator', html: `<div class="form-panel" style="padding:0"><div class="form-group"><label class="form-label">Enter numbers (comma separated)</label><textarea class="notes-area" id="statsData" style="min-height:80px;font-family:var(--font-mono)">12, 15, 18, 22, 25, 28, 30, 35, 40, 45</textarea></div><button class="form-btn" onclick="calcStats()">Calculate Statistics</button><div id="statsResults" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px"></div></div>` },
+      matrix: { title: 'Matrix Calculator (2x2)', html: `<div class="form-panel" style="padding:0"><div class="form-label" style="margin-bottom:4px">Matrix A (2x2)</div><div class="form-row"><input type="number" class="form-input" id="m00" value="1"><input type="number" class="form-input" id="m01" value="2"></div><div class="form-row"><input type="number" class="form-input" id="m10" value="3"><input type="number" class="form-input" id="m11" value="4"></div><button class="form-btn" onclick="calcMatrix()">Calculate</button><div id="matrixResults" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div></div>` },
+      complex: { title: 'Complex Number Calculator', html: `<div class="form-panel" style="padding:0"><div class="form-label">Number 1 (a + bi)</div><div class="form-row"><div class="form-group"><label class="form-label">Real (a)</label><input type="number" class="form-input" id="cx1a" value="3"></div><div class="form-group"><label class="form-label">Imag (b)</label><input type="number" class="form-input" id="cx1b" value="2"></div></div><div class="form-label" style="margin-top:8px">Number 2 (c + di)</div><div class="form-row"><div class="form-group"><label class="form-label">Real (c)</label><input type="number" class="form-input" id="cx2a" value="1"></div><div class="form-group"><label class="form-label">Imag (d)</label><input type="number" class="form-input" id="cx2b" value="4"></div></div><div class="form-row"><button class="form-btn secondary" onclick="calcComplex('add')">Add</button><button class="form-btn" onclick="calcComplex('mul')">Multiply</button></div><div class="form-result"><div class="form-result-value" id="cxResult">—</div><div class="form-result-label">Result</div></div></div>` },
+      love: { title: 'Love Percentage', html: `<div class="form-panel" style="padding:0;text-align:center"><div class="form-group"><label class="form-label">Your Name</label><input type="text" class="form-input" id="loveName1" placeholder="Enter name" style="text-align:center"></div><div style="font-size:40px;color:var(--accent);margin:8px 0"><span class="material-icons-round">favorite</span></div><div class="form-group"><label class="form-label">Partner's Name</label><input type="text" class="form-input" id="loveName2" placeholder="Enter name" style="text-align:center"></div><button class="form-btn" onclick="calcLove()">Calculate Love</button><div class="form-result"><div class="form-result-value" id="loveResult" style="font-size:2.5rem">—</div><div class="form-result-label" id="loveLabel">Love Percentage</div></div></div>` },
+      notes: { title: 'Quick Notes', html: `<div class="form-panel" style="padding:0"><textarea class="notes-area" id="notesArea" placeholder="Type your notes here...">${localStorage.getItem('cp_notes') || ''}</textarea><button class="form-btn" onclick="saveNotes()" style="margin-top:8px">Save Notes</button></div>` }
+    };
+    const config = toolConfigs[tool];
+    if (!config) return;
+    titleEl.textContent = config.title;
+    bodyEl.innerHTML = config.html;
+    if (tool === 'password') {
+      bodyEl.querySelectorAll('.toggle').forEach(t => {
+        t.addEventListener('click', () => { t.classList.toggle('on'); t.setAttribute('aria-checked', t.classList.contains('on')); });
+      });
+    }
+    if (tool === 'age') {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('ageAsOf').value = today;
+    }
+    if (tool === 'date') {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('dateEnd').value = today;
+    }
+    openModal('toolModal');
+  }
+
+  // Tool calculation functions (all referenced in HTML)
+  function calcAge() {
+    const dob = new Date(document.getElementById('ageDob').value);
+    const asOf = new Date(document.getElementById('ageAsOf').value);
+    if (isNaN(dob) || isNaN(asOf)) { document.getElementById('ageResult').textContent = 'Invalid date'; return; }
+    let years = asOf.getFullYear() - dob.getFullYear();
+    let months = asOf.getMonth() - dob.getMonth();
+    let days = asOf.getDate() - dob.getDate();
+    if (days < 0) { months--; days += new Date(asOf.getFullYear(), asOf.getMonth(), 0).getDate(); }
+    if (months < 0) { years--; months += 12; }
+    const totalDays = Math.floor((asOf - dob) / 86400000);
+    document.getElementById('ageResult').textContent = `${years}y ${months}m ${days}d`;
+    document.getElementById('ageDays').textContent = totalDays.toLocaleString() + ' days';
+  }
+
+  function calcDateDiff() {
+    const start = new Date(document.getElementById('dateStart').value);
+    const end = new Date(document.getElementById('dateEnd').value);
+    if (isNaN(start) || isNaN(end)) { document.getElementById('dateResult').textContent = 'Invalid'; return; }
+    const days = Math.abs(Math.floor((end - start) / 86400000));
+    const weeks = Math.floor(days / 7);
+    document.getElementById('dateResult').textContent = `${days} days (${weeks}w ${days % 7}d)`;
+  }
+
+  function calcTimeDiff() {
+    const [sh, sm] = (document.getElementById('timeStart').value || '0:0').split(':').map(Number);
+    const [eh, em] = (document.getElementById('timeEnd').value || '0:0').split(':').map(Number);
+    let diffMin = (eh * 60 + em) - (sh * 60 + sm);
+    if (diffMin < 0) diffMin += 1440;
+    const h = Math.floor(diffMin / 60);
+    const m = diffMin % 60;
+    document.getElementById('timeResult').textContent = `${h}h ${m}m (${diffMin} minutes)`;
+  }
+
+  function calcBMI() {
+    const w = parseFloat(document.getElementById('bmiWeight').value) || 0;
+    const hCm = parseFloat(document.getElementById('bmiHeight').value) || 1;
+    const h = hCm / 100;
+    const bmi = w / (h * h);
+    let label = 'Normal';
+    let color = 'var(--accent2)';
+    if (bmi < 18.5) { label = 'Underweight'; color = '#fdcb6e'; }
+    else if (bmi < 25) { label = 'Normal'; color = 'var(--accent2)'; }
+    else if (bmi < 30) { label = 'Overweight'; color = '#e17055'; }
+    else { label = 'Obese'; color = '#f87171'; }
+    document.getElementById('bmiResult').textContent = bmi.toFixed(1);
+    document.getElementById('bmiResult').style.color = color;
+    document.getElementById('bmiLabel').textContent = label;
+  }
+
+  function calcCalorie() {
+    const age = parseInt(document.getElementById('calAge').value) || 0;
+    const gender = document.getElementById('calGender').value;
+    const w = parseFloat(document.getElementById('calWeight').value) || 0;
+    const h = parseFloat(document.getElementById('calHeight').value) || 0;
+    const activity = parseFloat(document.getElementById('calActivity').value) || 1;
+    let bmr;
+    if (gender === 'male') bmr = 10 * w + 6.25 * h - 5 * age + 5;
+    else bmr = 10 * w + 6.25 * h - 5 * age - 161;
+    const tdee = bmr * activity;
+    document.getElementById('calResult').textContent = Math.round(tdee).toLocaleString() + ' kcal';
+  }
+
+  function addGPASubject() {
+    const container = document.getElementById('gpaSubjects');
+    const row = document.createElement('div');
+    row.className = 'form-row gpa-row';
+    row.innerHTML = `<div class="form-group"><input type="text" class="form-input" placeholder="Subject"></div><div class="form-group"><select class="form-select gpa-grade"><option value="4">A+</option><option value="4">A</option><option value="3.7">A-</option><option value="3.3">B+</option><option value="3">B</option><option value="2.7">B-</option><option value="2.3">C+</option><option value="2">C</option><option value="1.7">C-</option><option value="1">D</option><option value="0">F</option></select></div>`;
+    container.appendChild(row);
+  }
+
+  function calcGPA() {
+    const grades = document.querySelectorAll('.gpa-grade');
+    if (grades.length === 0) return;
+    let sum = 0;
+    grades.forEach(g => sum += parseFloat(g.value));
+    const gpa = sum / grades.length;
+    document.getElementById('gpaResult').textContent = gpa.toFixed(2);
+  }
+
+  function calcPercentage1() {
+    const a = parseFloat(document.getElementById('pctA').value) || 0;
+    const b = parseFloat(document.getElementById('pctB').value) || 0;
+    document.getElementById('pctResult1').textContent = (a / 100 * b).toFixed(2);
+  }
+  function calcPercentage2() {
+    const c = parseFloat(document.getElementById('pctC').value) || 0;
+    const d = parseFloat(document.getElementById('pctD').value) || 1;
+    document.getElementById('pctResult2').textContent = (c / d * 100).toFixed(2) + '%';
+  }
+
+  function calcRandom() {
+    const min = parseInt(document.getElementById('randMin').value) || 0;
+    const max = parseInt(document.getElementById('randMax').value) || 100;
+    const count = Math.min(parseInt(document.getElementById('randCount').value) || 1, 100);
+    const nums = [];
+    for (let i = 0; i < count; i++) nums.push(Math.floor(Math.random() * (max - min + 1)) + min);
+    document.getElementById('randResult').textContent = nums.join(', ');
+  }
+
+  function genPassword() {
+    const len = Math.min(Math.max(parseInt(document.getElementById('pwLen').value) || 16, 4), 64);
+    const count = Math.min(parseInt(document.getElementById('pwCount').value) || 1, 10);
+    const upper = document.getElementById('pwUpper').classList.contains('on');
+    const nums = document.getElementById('pwNums').classList.contains('on');
+    const syms = document.getElementById('pwSyms').classList.contains('on');
+    let chars = 'abcdefghijklmnopqrstuvwxyz';
+    if (upper) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    if (nums) chars += '0123456789';
+    if (syms) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    const passwords = [];
+    for (let i = 0; i < count; i++) {
+      let pw = '';
+      const arr = new Uint32Array(len);
+      crypto.getRandomValues(arr);
+      for (let j = 0; j < len; j++) pw += chars[arr[j] % chars.length];
+      passwords.push(pw);
+    }
+    document.getElementById('pwResult').innerHTML = passwords.map(p => `<div style="padding:8px;background:var(--btn-bg);border-radius:8px;margin-bottom:4px;cursor:pointer;word-break:break-all" onclick="copyToClipboard('${p.replace(/'/g, "\\'")}');showToast('Copied')">${escHtml(p)}</div>`).join('');
+  }
+
+  function calcStats() {
+    const data = document.getElementById('statsData').value.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+    if (data.length === 0) return;
+    const sorted = [...data].sort((a, b) => a - b);
+    const n = data.length;
+    const sum = data.reduce((a, b) => a + b, 0);
+    const mean = sum / n;
+    const median = n % 2 === 0 ? (sorted[n/2-1] + sorted[n/2]) / 2 : sorted[Math.floor(n/2)];
+    const variance = data.reduce((acc, v) => acc + (v - mean) ** 2, 0) / n;
+    const stddev = Math.sqrt(variance);
+    const min = sorted[0];
+    const max = sorted[n - 1];
+    const range = max - min;
+    const stats = [
+      { label: 'Count', value: n },
+      { label: 'Sum', value: formatNumber(sum) },
+      { label: 'Mean', value: mean.toFixed(4) },
+      { label: 'Median', value: median.toFixed(4) },
+      { label: 'Std Dev', value: stddev.toFixed(4) },
+      { label: 'Variance', value: variance.toFixed(4) },
+      { label: 'Min', value: formatNumber(min) },
+      { label: 'Max', value: formatNumber(max) },
+      { label: 'Range', value: formatNumber(range) },
+    ];
+    document.getElementById('statsResults').innerHTML = stats.map(s =>
+      `<div class="form-result" style="padding:10px"><div class="form-result-value" style="font-size:0.95rem">${s.value}</div><div class="form-result-label">${s.label}</div></div>`
+    ).join('');
+  }
+
+  function calcMatrix() {
+    const m = [
+      [parseFloat(document.getElementById('m00').value) || 0, parseFloat(document.getElementById('m01').value) || 0],
+      [parseFloat(document.getElementById('m10').value) || 0, parseFloat(document.getElementById('m11').value) || 0]
+    ];
+    const det = m[0][0] * m[1][1] - m[0][1] * m[1][0];
+    const trace = m[0][0] + m[1][1];
+    let inv = 'Not invertible (det=0)';
+    if (det !== 0) {
+      inv = `[${(m[1][1]/det).toFixed(3)}, ${(-m[0][1]/det).toFixed(3)}] / [${(-m[1][0]/det).toFixed(3)}, ${(m[0][0]/det).toFixed(3)}]`;
+    }
+    document.getElementById('matrixResults').innerHTML = `
+      <div class="form-result"><div class="form-result-value" style="font-size:1.1rem">${det.toFixed(4)}</div><div class="form-result-label">Determinant</div></div>
+      <div class="form-result" style="background:rgba(0,206,201,0.1);border-color:rgba(0,206,201,0.2)"><div class="form-result-value" style="font-size:1.1rem;color:var(--accent2)">${trace.toFixed(4)}</div><div class="form-result-label">Trace</div></div>
+      <div class="form-result" style="text-align:left"><div class="form-result-value" style="font-size:0.8rem;font-family:var(--font-mono)">${inv}</div><div class="form-result-label">Inverse</div></div>
+    `;
+  }
+
+  function calcComplex(op) {
+    const a = parseFloat(document.getElementById('cx1a').value) || 0;
+    const b = parseFloat(document.getElementById('cx1b').value) || 0;
+    const c = parseFloat(document.getElementById('cx2a').value) || 0;
+    const d = parseFloat(document.getElementById('cx2b').value) || 0;
+    let real, imag;
+    if (op === 'add') { real = a + c; imag = b + d; }
+    else { real = a * c - b * d; imag = a * d + b * c; }
+    const sign = imag >= 0 ? '+' : '−';
+    document.getElementById('cxResult').textContent = `${real.toFixed(4)} ${sign} ${Math.abs(imag).toFixed(4)}i`;
+  }
+
+  function calcLove() {
+    const n1 = (document.getElementById('loveName1').value || '').toLowerCase().trim();
+    const n2 = (document.getElementById('loveName2').value || '').toLowerCase().trim();
+    if (!n1 || !n2) { document.getElementById('loveResult').textContent = '0%'; return; }
+    let hash = 0;
+    const combined = n1 + n2;
+    for (let i = 0; i < combined.length; i++) { hash = ((hash << 5) - hash) + combined.charCodeAt(i); hash |= 0; }
+    const pct = Math.abs(hash % 101);
+    document.getElementById('loveResult').textContent = pct + '%';
+    const labels = pct > 80 ? 'Made for each other' : pct > 60 ? 'Great match' : pct > 40 ? 'Could work out' : pct > 20 ? 'Needs effort' : 'Maybe not...';
+    document.getElementById('loveLabel').textContent = labels;
+    document.getElementById('loveResult').style.color = pct > 60 ? 'var(--accent)' : pct > 30 ? '#fdcb6e' : '#f87171';
+  }
+
+  function saveNotes() {
+    localStorage.setItem('cp_notes', document.getElementById('notesArea').value);
+    showToast('Notes saved', 'note');
+  }
+
+  // ===== SETTINGS =====
+  function initSettings() {
+    document.getElementById('toggleTheme').addEventListener('click', function() {
+      State.theme = State.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('cp_theme', State.theme);
+      applySettings();
+    });
+    document.getElementById('toggleContrast').addEventListener('click', function() {
+      State.contrast = !State.contrast;
+      localStorage.setItem('cp_contrast', State.contrast);
+      applySettings();
+    });
+    document.getElementById('toggleAnim').addEventListener('click', function() {
+      State.animOn = !State.animOn;
+      localStorage.setItem('cp_anim', State.animOn);
+      applySettings();
+    });
+    document.querySelectorAll('.color-swatch').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        State.accent = swatch.dataset.color;
+        localStorage.setItem('cp_accent', State.accent);
+        applySettings();
+      });
+    });
+    document.getElementById('btnSizeSlider').addEventListener('input', (e) => {
+      State.btnSize = parseInt(e.target.value);
+      localStorage.setItem('cp_btnSize', State.btnSize);
+      applySettings();
+    });
+    document.getElementById('btnClearHistory').addEventListener('click', () => {
+      State.history = [];
+      localStorage.removeItem('cp_history');
+      showToast('History cleared', 'delete_sweep');
+    });
+    document.getElementById('btnExportData').addEventListener('click', () => {
+      if (State.history.length === 0) { showToast('No data to export', 'info'); return; }
+      let csv = 'Expression,Result,Date\n';
+      State.history.forEach(h => {
+        csv += `"${h.expr}","${h.result}","${new Date(h.time).toLocaleString()}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'calcpro_history.csv'; a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV exported', 'download');
+    });
+    document.getElementById('btnInstall').addEventListener('click', () => {
+      if (window.deferredPrompt) {
+        window.deferredPrompt.prompt();
+        window.deferredPrompt = null;
+      } else {
+        showToast('Add to home screen from browser menu', 'install_mobile');
+      }
+    });
+    document.querySelectorAll('.toggle').forEach(t => {
+      t.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t.click(); } });
+    });
+  }
+
+  // ===== NAV ACTIONS =====
+  function initNavActions() {
+    document.getElementById('btn-voice').addEventListener('click', toggleVoice);
+    document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
+    document.getElementById('btn-history').addEventListener('click', () => {
+      renderHistory();
+      openModal('historyModal');
+    });
+    document.getElementById('fabCopy').addEventListener('click', () => {
+      const activePanel = document.querySelector('.calc-panel.active');
+      let result = '0';
+      if (activePanel) {
+        const resultEl = activePanel.querySelector('.display-result');
+        if (resultEl) result = resultEl.textContent;
+      }
+      copyToClipboard(result.replace(/,/g, ''));
+      showToast('Copied: ' + result, 'content_copy');
+    });
+  }
+
+  // ===== VOICE =====
+  function toggleVoice() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      showToast('Voice not supported', 'mic_off');
+      return;
+    }
+    if (State.voiceActive) { stopVoice(); return; }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    State.recognition = new SpeechRecognition();
+    State.recognition.continuous = false;
+    State.recognition.interimResults = false;
+    State.recognition.lang = 'en-US';
+    State.recognition.onstart = () => {
+      State.voiceActive = true;
+      document.getElementById('voiceIndicator').classList.add('active');
+      document.getElementById('btn-voice').style.color = '#f87171';
+    };
+    State.recognition.onresult = (event) => {
+      const text = event.results[0][0].transcript;
+      processVoiceInput(text);
+    };
+    State.recognition.onerror = () => { stopVoice(); };
+    State.recognition.onend = () => { stopVoice(); };
+    State.recognition.start();
+  }
+
+  function stopVoice() {
+    State.voiceActive = false;
+    document.getElementById('voiceIndicator').classList.remove('active');
+    document.getElementById('btn-voice').style.color = '';
+    if (State.recognition) { try { State.recognition.stop(); } catch(e) {} }
+  }
+
+  function processVoiceInput(text) {
+    let expr = text.toLowerCase()
+      .replace(/plus/g, '+').replace(/minus/g, '-').replace(/times|multiplied by/g, '*')
+      .replace(/divided by|over/g, '/').replace(/power|to the power of/g, '**')
+      .replace(/modulo|mod/g, '%').replace(/equals/g, '=')
+      .replace(/zero/g, '0').replace(/one/g, '1').replace(/two/g, '2')
+      .replace(/three/g, '3').replace(/four/g, '4').replace(/five/g, '5')
+      .replace(/six/g, '6').replace(/seven/g, '7').replace(/eight/g, '8')
+      .replace(/nine/g, '9').replace(/\s+/g, ' ').trim();
+    showToast('Heard: ' + text, 'mic');
+    if (expr.includes('=')) {
+      const parts = expr.split('=');
+      const toEval = parts[0].trim();
+      const result = safeEval(toEval.replace(/\^/g, '**'));
+      if (result !== null && isFinite(result)) {
+        const formatted = formatNumber(result);
+        document.getElementById('basicExpr').textContent = toEval + ' =';
+        document.getElementById('basicResult').textContent = formatted;
+        State.display = String(result);
+        State.expr = '';
+        State.newNumber = true;
+        addToHistory(toEval, formatted);
+        document.querySelector('.tab-item[data-tab="basic"]').click();
+        adjustResultSize(document.getElementById('basicResult'), formatted);
+      }
+    } else {
+      expr.split(' ').forEach(token => {
+        if (/^[0-9.]+$/.test(token)) handleBasicAction('num', token);
+        else if (['+','-','*','/'].includes(token)) handleBasicAction('op', token);
+      });
+      document.querySelector('.tab-item[data-tab="basic"]').click();
+    }
+  }
+
+  // ===== FULLSCREEN =====
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  // ===== KEYBOARD =====
+  function initKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+      const key = e.key;
+      const activePanel = document.querySelector('.calc-panel.active');
+      if (!activePanel) return;
+      if (activePanel.id === 'panel-basic' || activePanel.id === 'panel-scientific') {
+        if (/^[0-9]$/.test(key)) {
+          if (activePanel.id === 'panel-scientific') handleSciAction('num', key);
+          else handleBasicAction('num', key);
+        } else if (key === '.') {
+          if (activePanel.id === 'panel-scientific') handleSciAction('decimal');
+          else handleBasicAction('decimal');
+        } else if (['+', '-'].includes(key)) {
+          if (activePanel.id === 'panel-scientific') handleSciAction('op', key);
+          else handleBasicAction('op', key);
+        } else if (key === '*') {
+          if (activePanel.id === 'panel-scientific') handleSciAction('op', '*');
+          else handleBasicAction('op', '*');
+        } else if (key === '/') {
+          e.preventDefault();
+          if (activePanel.id === 'panel-scientific') handleSciAction('op', '/');
+          else handleBasicAction('op', '/');
+        } else if (key === 'Enter' || key === '=') {
+          e.preventDefault();
+          if (activePanel.id === 'panel-scientific') handleSciAction('equals');
+          else handleBasicAction('equals');
+        } else if (key === 'Backspace') {
+          if (activePanel.id === 'panel-scientific') handleSciAction('backspace');
+          else handleBasicAction('backspace');
+        } else if (key === 'Escape' || key === 'Delete') {
+          if (activePanel.id === 'panel-scientific') handleSciAction('clear');
+          else handleBasicAction('clear');
+        } else if (key === '%') {
+          if (activePanel.id === 'panel-scientific') handleSciAction('percent');
+          else handleBasicAction('percent');
+        } else if (key === '(' || key === ')') {
+          if (activePanel.id === 'panel-scientific') handleSciAction('op', key);
         }
+      } else if (activePanel.id === 'panel-programmer') {
+        if (/^[0-9A-Fa-f]$/.test(key)) handleProgAction('num', key.toUpperCase());
+        else if (['+', '-'].includes(key)) handleProgAction('op', key);
+        else if (key === '*') handleProgAction('op', '*');
+        else if (key === '/') { e.preventDefault(); handleProgAction('op', '/'); }
+        else if (key === 'Enter' || key === '=') { e.preventDefault(); handleProgAction('equals'); }
+        else if (key === 'Backspace') handleProgAction('backspace');
+        else if (key === 'Escape' || key === 'Delete') handleProgAction('clear');
+      }
+    });
+  }
 
-        function clearDisplay() {
-            currentInput = '0';
-            previousInput = '';
-            lastOperator = null;
-            shouldResetScreen = false;
-            updateDisplay();
-        }
+  // ===== CLIPBOARD =====
+  function copyToClipboard(text) {
+    if (navigator.clipboard) { navigator.clipboard.writeText(text).catch(() => fallbackCopy(text)); }
+    else { fallbackCopy(text); }
+  }
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove();
+  }
 
-        function deleteNumber() {
-            if (shouldResetScreen) return;
-            if (currentInput.length === 1) {
-                currentInput = '0';
-            } else {
-                currentInput = currentInput.slice(0, -1);
-            }
-            updateDisplay();
-        }
+  // ===== UTILITY =====
+  function escHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+  function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+  function lighten(hex, percent) {
+    let r = parseInt(hex.slice(1,3), 16);
+    let g = parseInt(hex.slice(3,5), 16);
+    let b = parseInt(hex.slice(5,7), 16);
+    r = Math.min(255, r + Math.round(r * percent / 100));
+    g = Math.min(255, g + Math.round(g * percent / 100));
+    b = Math.min(255, b + Math.round(b * percent / 100));
+    return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+  }
 
-        function calculate() {
-            if (lastOperator === null || shouldResetScreen) return;
-            
-            let result;
-            const prev = parseFloat(previousInput);
-            const current = parseFloat(currentInput);
+  // ===== PWA =====
+  function initPWA() {
+    const manifest = {
+      name: 'CalcPro — Premium Calculator',
+      short_name: 'CalcPro',
+      description: 'All-in-one premium calculator with 25+ tools',
+      start_url: '.',
+      display: 'standalone',
+      background_color: '#0a0e1a',
+      theme_color: '#6c5ce7',
+      orientation: 'any',
+      icons: [
+        { src: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#6c5ce7"/><text x="96" y="130" text-anchor="middle" font-size="120" font-family="sans-serif" fill="white">CP</text></svg>'), sizes: '192x192', type: 'image/svg+xml' },
+        { src: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#6c5ce7"/><text x="256" y="340" text-anchor="middle" font-size="300" font-family="sans-serif" fill="white">CP</text></svg>'), sizes: '512x512', type: 'image/svg+xml' }
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    document.getElementById('manifest-link').href = URL.createObjectURL(blob);
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE = 'calcpro-v2';
+        const ASSETS = ['./', './index.html'];
+        self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))); self.skipWaiting(); });
+        self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))); self.clients.claim(); });
+        self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./')))); });
+      `;
+      const swBlob = new Blob([swCode], { type: 'application/javascript' });
+      const swUrl = URL.createObjectURL(swBlob);
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    }
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      window.deferredPrompt = e;
+    });
+  }
 
-            if (isNaN(prev) || isNaN(current)) return;
-
-            try {
-                switch (lastOperator) {
-                    case '+': result = prev + current; break;
-                    case '-': result = prev - current; break;
-                    case '*': result = prev * current; break;
-                    case '/': 
-                        if (current === 0) throw new Error("Div by 0");
-                        result = prev / current; 
-                        break;
-                    default: return;
-                }
-
-                // Handle floating point precision issues (e.g., 0.1 + 0.2)
-                result = Math.round(result * 100000000) / 100000000;
-                
-                currentInput = result.toString();
-                previousInput = '';
-                lastOperator = null;
-                shouldResetScreen = true;
-                updateDisplay();
-            } catch (e) {
-                currentInput = 'Error';
-                previousInput = '';
-                lastOperator = null;
-                shouldResetScreen = true;
-                updateDisplay();
-            }
-        }
-
-        /**
-         * KEYBOARD SUPPORT
-         */
-        window.addEventListener('keydown', (e) => {
-            if (e.key >= 0 && e.key <= 9) appendNumber(e.key);
-            if (e.key === '.') appendNumber('.');
-            if (e.key === '=' || e.key === 'Enter') {
-                e.preventDefault(); // Prevent button focus triggering
-                calculate();
-            }
-            if (e.key === 'Backspace') deleteNumber();
-            if (e.key === 'Escape') clearDisplay();
-            if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
-                appendOperator(e.key);
-            }
-            if (e.key === '%') appendOperator('%');
-        });
-
-        // Initialize display on load
-        updateDisplay();
-    </script>
+  // expose functions to global scope for inline onclick
+  window.calcEMI = calcEMI;
+  window.calcSIP = calcSIP;
+  window.calcLoan = calcLoan;
+  window.calcGST = calcGST;
+  window.calcDiscount = calcDiscount;
+  window.calcPL = calcPL;
+  window.calcTax = calcTax;
+  window.calcTip = calcTip;
+  window.calcSplit = calcSplit;
+  window.calcCurrency = calcCurrency;
+  window.swapCurrency = swapCurrency;
+  window.calcFuel = calcFuel;
+  window.calcElectricity = calcElectricity;
+  window.calcAge = calcAge;
+  window.calcDateDiff = calcDateDiff;
+  window.calcTimeDiff = calcTimeDiff;
+  window.calcBMI = calcBMI;
+  window.calcCalorie = calcCalorie;
+  window.addGPASubject = addGPASubject;
+  window.calcGPA = calcGPA;
+  window.calcPercentage1 = calcPercentage1;
+  window.calcPercentage2 = calcPercentage2;
+  window.calcRandom = calcRandom;
+  window.genPassword = genPassword;
+  window.calcStats = calcStats;
+  window.calcMatrix = calcMatrix;
+  window.calcComplex = calcComplex;
+  window.calcLove = calcLove;
+  window.saveNotes = saveNotes;
+  window.copyToClipboard = copyToClipboard;
+  window.showToast = showToast;
+  window.closeModal = closeModal;
+</script>
 </body>
 </html>
